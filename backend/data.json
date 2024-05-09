@@ -1,0 +1,84 @@
+{
+  "bonds": [
+    {
+      "name": "OTS",
+      "yearPercentage": 0.03,
+      "capitalization": 3,
+      "duration": 3,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null
+    },
+    {
+      "name": "ROR",
+      "yearPercentage": 0.0605,
+      "capitalization": 12,
+      "duration": 12,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 1
+    },
+    {
+      "name": "DOR",
+      "yearPercentage": 0.063,
+      "capitalization": 24,
+      "duration": 24,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 1
+    },
+    {
+      "name": "TOS",
+      "yearPercentage": 0.064,
+      "capitalization": 12,
+      "duration": 36,
+      "penalty": 0.7,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null
+    },
+    {
+      "name": "COI",
+      "yearPercentage": 0.0655,
+      "capitalization": 12,
+      "duration": 48,
+      "penalty": 0.7,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 12
+    },
+    {
+      "name": "EDO",
+      "yearPercentage": 0.068,
+      "capitalization": 12,
+      "duration": 120,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null
+    },
+    {
+      "name": "ROS",
+      "yearPercentage": 0.0675,
+      "capitalization": 12,
+      "duration": 72,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null
+    },
+    {
+      "name": "ROD",
+      "yearPercentage": 0.0705,
+      "capitalization": 12,
+      "duration": 144,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null
+    }
+  ]
+}

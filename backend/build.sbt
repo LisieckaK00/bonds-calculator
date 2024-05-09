@@ -8,5 +8,6 @@ lazy val root = project
 
     scalaVersion := scala3Version,
 
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
+    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
+    libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2"
   )

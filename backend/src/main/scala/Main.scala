@@ -1,5 +1,11 @@
-@main def main(): Unit =
-  val tos = new Bond("TOS", 0.064, 12, 36, 0.70, 2);
+@main def main(): Unit = {
+  val reader: JSONReader = new JSONReader()
+  val bondListFromFile: BondList = reader.loadFromFile("data.json")
+  bondListFromFile.bonds.foreach(_.calculate(36))
+//  println(bondListFromFile)
+//  bondListFromFile.bonds.find(_.name == "DOR").foreach(_.calculate(24))
 
-  tos.calculate(36)
+}
+
+
 
