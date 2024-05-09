@@ -11,11 +11,11 @@ case class Bond @JsonCreator() (
    @JsonProperty("distribution") distribution: Option[Int]
 
  ) {
-  val startValue: Double = 100 * quantity
-  val monthPercentage: Double = yearPercentage / 12
+  private val startValue: Double = 100 * quantity
+  private val monthPercentage: Double = yearPercentage / 12
 
 
-  def roundToTwoPlaces(x: Double): Double = {
+  private def roundToTwoPlaces(x: Double): Double = {
     BigDecimal(x).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
@@ -51,7 +51,7 @@ case class Bond @JsonCreator() (
     result
   }
 
-  def calculateEndValue(period: Int): (Double, Double, Double, Double, Double) = {
+  private def calculateEndValue(period: Int): (Double, Double, Double, Double, Double) = {
     var baseValue = startValue
     var currentValue: Double = startValue
     var cumulativeInterest: Double = 0
@@ -79,8 +79,6 @@ case class Bond @JsonCreator() (
             cumulativeInterest = 0
         }
       }
-
-
 
     var currentValueWithPenalty = currentValue
 
