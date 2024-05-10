@@ -61,7 +61,7 @@ case class Bond @JsonCreator() (
             case 2 => if result(row)(1) == 1 then floor(result(row-1)(9) / change) else result(row-1)(2)
             case 3 => if result(row-1)(1) == 1 then result(row)(2) * change else result(row-1)(3)
             case 4 => result(row)(2) * startPrice
-            case 5 => if result(row-1)(1) == 1 then result(row)(2) * result(row)(4)
+            case 5 => if result(row-1)(1) == 1 then result(row)(4)
                       else
                         if result(row)(0) % capitalization != 1
                         then result(row-1)(5)
