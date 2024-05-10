@@ -1,90 +1,86 @@
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
 
+import scala.math.floor
+
 case class Bond @JsonCreator() (
    @JsonProperty("name") name: String,
    @JsonProperty("yearPercentage") yearPercentage: Double,
+   @JsonProperty("inflationModifier") inflationModifier: Double,
    @JsonProperty("capitalization") capitalization: Int,
    @JsonProperty("duration") duration: Int,
    @JsonProperty("penalty") penalty: Double,
    @JsonProperty("quantity") quantity: Int,
    @JsonProperty("type") bond_type: String,
-   @JsonProperty("distribution") distribution: Option[Int]
-
+   @JsonProperty("distribution") distribution: Option[Int],
+   @JsonProperty("startPrice") startPrice: Double,
+   @JsonProperty("change") change: Double
  ) {
-  private val startValue: Double = 100 * quantity
-  private val monthPercentage: Double = yearPercentage / 12
 
+  val inflation: Double = 5
 
   private def roundToTwoPlaces(x: Double): Double = {
     BigDecimal(x).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
-  def calculate(period: Int): Array[Array[Double]] = {
-    val result: Array[Array[Double]] = Array.ofDim[Double](period, 5)
-
-    for i <- 1 to period do
-      val (baseValue, currentValue, monthInterest, currentValueWithPenalty, accountValue) = calculateEndValue(i)
-      result(i - 1) = Array(
-        roundToTwoPlaces(baseValue),
-        roundToTwoPlaces(currentValue),
-        roundToTwoPlaces(monthInterest),
-        roundToTwoPlaces(currentValueWithPenalty),
-        roundToTwoPlaces(accountValue)
-      )
-
-    bond_type match {
-      case "acc" => {
-        println(s"Obligacja: $name")
-        println("End of Month | Base Value | Current Value | Month Interest | Value After Penalty | Account Value")
-      }
-      case "dist" => {
-        println(s"Obligacja: $name")
-        println("End of Month | Base Value | Current Value |     Withdrawal | Value After Penalty | Account Value")
-      }
-    }
-
-    result.zipWithIndex.foreach { case (row, index) =>
-      val month = index + 1
-      println(f"$month%12d | ${row(0)}%10.2f | ${row(1)}%13.2f | ${row(2)}%14.2f | ${row(3)}%19.2f | ${row(4)}%13.2f")
-    }
-
-    result
+  private def makeDecimalPercentage(x: Double): Double = {
+    x/100
   }
 
-  private def calculateEndValue(period: Int): (Double, Double, Double, Double, Double) = {
-    var baseValue = startValue
-    var currentValue: Double = startValue
-    var cumulativeInterest: Double = 0
-    var monthInterest: Double = 0
-    var accountValue: Double = 0
+  def calculate(period: Int): Unit = {
+    bond_type match {
+      case "acc" => calculateEndValueAcc(period)
+      case "dist" => println("Function does not exist yet")
+      case _ => println("Invalid type")
 
-    for i <- 1 to period do
-      monthInterest = baseValue * monthPercentage
-      cumulativeInterest += monthInterest
+    }
+  }
 
-      bond_type match {
-        case "acc" => {
-          currentValue += monthInterest
-          if i % capitalization == 0 then
-            baseValue += cumulativeInterest
-            cumulativeInterest = 0
+  private def calculateEndValueAcc(period: Int): Unit = {
+    val result: Array[Array[Double]] = Array.fill[Double](period, 11)(-1.0)
 
-          if period % duration == 0 then
-             accountValue = currentValue
+    result(0)(0) = 1
+    result(0)(2) = quantity
+    result(0)(3) = startPrice
+    result(0)(5) = 100
+    result(0)(10) = 0
 
-        }
-        case "dist" => {
-          if distribution.get == 1 | i % distribution.get == 0 then
-            accountValue += cumulativeInterest
-            cumulativeInterest = 0
-        }
+    for row <- 0 until period do
+      for col <- 0 until 11 do
+        if result(row)(col) == -1.0 then
+            result(row)(col) = col match {
+            case 0 => result(row - 1)(col) + 1
+            case 1 => if result(row)(0) % duration == 0 then 1 else 0
+            case 2 => if result(row)(1) == 1 then floor(result(row-1)(9) / change) else result(row-1)(2)
+            case 3 => if result(row)(1) == 1 then result(row)(2) * change else result(row-1)(3)
+            case 4 => result(row)(2) * startPrice
+            case 5 => if result(row-1)(1) == 1 then result(row)(2) * result(row)(4)
+                      else
+                        if result(row)(0) % capitalization != 1
+                        then result(row-1)(5)
+                        else result(row-1)(7)
+            case 6 => if inflationModifier != 0 then
+                        if result(row)(0) > capitalization
+                        then makeDecimalPercentage(inflation + inflationModifier)
+                        else makeDecimalPercentage(yearPercentage)
+                      else makeDecimalPercentage(yearPercentage)
+            case 7 =>
+              val multiplier = if (result(row)(0) % capitalization != 0) then result(row)(0) % capitalization
+              else capitalization / 1.0
+              result(row)(5) * (1 + (result(row)(6) * multiplier / 12.0))
+            case 8 => if result(row)(1) == 1 then 0 else result(row)(7) - Math.max(result(row)(7) - penalty, startPrice)
+            case 9 => result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(2) * result(row)(3)) * 0.19
+            case 10 => if (row > 2 && result(row)(1) == 1) then
+                        result(row)(9) - math.floor(result(row)(9) / (result(row)(2) * result(row)(3))) * result(row)(2) * result(row)(3) + result(row - 1)(10)
+                        else result(row - 1)(10)
+
+            }
+
+    for (row <- result) {
+      for (elem <- row) {
+        print(elem + " ")
       }
+      println()
+    }
 
-    var currentValueWithPenalty = currentValue
-
-    if period % duration != 0 then
-      currentValueWithPenalty = math.max(currentValue - penalty, startValue)
-
-    (baseValue, currentValue, monthInterest, currentValueWithPenalty, accountValue)
   }
 }
