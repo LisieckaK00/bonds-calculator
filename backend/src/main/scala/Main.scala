@@ -3,7 +3,7 @@
   val bondListFromFile: BondList = reader.loadFromFile("data.json")
 //  bondListFromFile.bonds.foreach(_.calculate(36))
 //  println(bondListFromFile)
-  bondListFromFile.bonds.find(_.name == "OTS").foreach(_.calculate(12))
+  bondListFromFile.bonds.find(_.name == "TOS").foreach(_.calculate(38))
 
 }
 

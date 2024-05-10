@@ -22,20 +22,28 @@ case class Bond @JsonCreator() (
     BigDecimal(x).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
-  private def makeDecimalPercentage(x: Double): Double = {
-    x/100
+  private def makeDecimalPercentage(percentage: Double): Double = {
+    percentage/100
   }
 
   def calculate(period: Int): Unit = {
-    bond_type match {
+    val result = bond_type match {
       case "acc" => calculateEndValueAcc(period)
-      case "dist" => println("Function does not exist yet")
-      case _ => println("Invalid type")
-
+      case "dist" => println("Function does not exist yet"); Array[Array[Double]]()
+      case _ => println("Invalid type"); Array[Array[Double]]()
     }
+
+    println(s"Obligacja: $name")
+    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account")
+
+    result.zipWithIndex.foreach { case (row, index) =>
+      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
+        f"${row(6)}%10.2f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f")
+    }
+
   }
 
-  private def calculateEndValueAcc(period: Int): Unit = {
+  private def calculateEndValueAcc(period: Int): Array[Array[Double]] = {
     val result: Array[Array[Double]] = Array.fill[Double](period, 11)(-1.0)
 
     result(0)(0) = 1
@@ -51,7 +59,7 @@ case class Bond @JsonCreator() (
             case 0 => result(row - 1)(col) + 1
             case 1 => if result(row)(0) % duration == 0 then 1 else 0
             case 2 => if result(row)(1) == 1 then floor(result(row-1)(9) / change) else result(row-1)(2)
-            case 3 => if result(row)(1) == 1 then result(row)(2) * change else result(row-1)(3)
+            case 3 => if result(row-1)(1) == 1 then result(row)(2) * change else result(row-1)(3)
             case 4 => result(row)(2) * startPrice
             case 5 => if result(row-1)(1) == 1 then result(row)(2) * result(row)(4)
                       else
@@ -68,19 +76,15 @@ case class Bond @JsonCreator() (
               else capitalization / 1.0
               result(row)(5) * (1 + (result(row)(6) * multiplier / 12.0))
             case 8 => if result(row)(1) == 1 then 0 else result(row)(7) - Math.max(result(row)(7) - penalty, startPrice)
-            case 9 => result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(2) * result(row)(3)) * 0.19
-            case 10 => if (row > 2 && result(row)(1) == 1) then
+            case 9 => result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(2) * result(row)(4)) * 0.19
+            case 10 => if (row > 0 && result(row)(1) == 1) then
                         result(row)(9) - math.floor(result(row)(9) / (result(row)(2) * result(row)(3))) * result(row)(2) * result(row)(3) + result(row - 1)(10)
-                        else result(row - 1)(10)
-
+                        else if result(row-1)(1) == 1
+                        then result(row)(2) * 0.1 + result(row-1)(10)
+                        else result(row-1)(10)
             }
 
-    for (row <- result) {
-      for (elem <- row) {
-        print(elem + " ")
-      }
-      println()
-    }
+    result
 
   }
 }
