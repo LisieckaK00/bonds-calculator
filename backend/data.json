@@ -1,0 +1,108 @@
+{
+  "bonds": [
+    {
+      "name": "OTS",
+      "yearPercentage": 3,
+      "inflationModifier": 0,
+      "capitalization": 3,
+      "duration": 3,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null,
+      "startPrice": 100,
+      "change": 100
+    },
+    {
+      "name": "ROR",
+      "yearPercentage": 6.05,
+      "inflationModifier": 0,
+      "capitalization": 12,
+      "duration": 12,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 1,
+      "startPrice": 100,
+      "change": 90.9
+    },
+    {
+      "name": "DOR",
+      "yearPercentage": 6.3,
+      "inflationModifier": 0,
+      "capitalization": 24,
+      "duration": 24,
+      "penalty": 0.0,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 1,
+      "startPrice": 100,
+      "change": 99.9
+    },
+    {
+      "name": "TOS",
+      "yearPercentage": 35.4,
+      "inflationModifier": 0,
+      "capitalization": 12,
+      "duration": 36,
+      "penalty": 0.7,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null,
+      "startPrice": 100,
+      "change": 99.9
+    },
+    {
+      "name": "COI",
+      "yearPercentage": 0.0655,
+      "inflationModifier": 1.25,
+      "capitalization": 12,
+      "duration": 48,
+      "penalty": 0.7,
+      "quantity": 1,
+      "type": "dist",
+      "distribution": 12,
+      "startPrice": 100,
+      "change": 99.9
+    },
+    {
+      "name": "EDO",
+      "yearPercentage": 6.8,
+      "inflationModifier": 1.5,
+      "capitalization": 12,
+      "duration": 120,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null,
+      "startPrice": 100,
+      "change": 99.9
+    },
+    {
+      "name": "ROS",
+      "yearPercentage": 6.75,
+      "inflationModifier": 1.75,
+      "capitalization": 12,
+      "duration": 72,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null,
+      "startPrice": 100,
+      "change": 99.9
+    },
+    {
+      "name": "ROD",
+      "yearPercentage": 7.05,
+      "inflationModifier": 2,
+      "capitalization": 12,
+      "duration": 144,
+      "penalty": 2,
+      "quantity": 1,
+      "type": "acc",
+      "distribution": null,
+      "startPrice": 100,
+      "change": 99.9
+    }
+  ]
+}

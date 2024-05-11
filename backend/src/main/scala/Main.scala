@@ -1,5 +1,11 @@
-@main def hello(): Unit =
-  println("Hello world!")
-  println(msg)
+@main def main(): Unit = {
+  val reader: JSONReader = new JSONReader()
+  val bondListFromFile: BondList = reader.loadFromFile("data.json")
+//  bondListFromFile.bonds.foreach(_.calculate(36))
+//  println(bondListFromFile)
+  bondListFromFile.bonds.find(_.name == "TOS").foreach(_.calculate(38))
 
-def msg = "I was compiled by Scala 3. :)"
+}
+
+
+
