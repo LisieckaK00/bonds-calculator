@@ -17,20 +17,20 @@
       "name": "ROR",
       "yearPercentage": 6.05,
       "inflationModifier": 0,
-      "capitalization": 12,
+      "capitalization": 1,
       "duration": 12,
       "penalty": 0.0,
       "quantity": 1,
       "type": "dist",
       "distribution": 1,
       "startPrice": 100,
-      "change": 90.9
+      "change": 99.9
     },
     {
       "name": "DOR",
       "yearPercentage": 6.3,
       "inflationModifier": 0,
-      "capitalization": 24,
+      "capitalization": 1,
       "duration": 24,
       "penalty": 0.0,
       "quantity": 1,
@@ -41,7 +41,7 @@
     },
     {
       "name": "TOS",
-      "yearPercentage": 35.4,
+      "yearPercentage": 6.4,
       "inflationModifier": 0,
       "capitalization": 12,
       "duration": 36,
@@ -54,7 +54,7 @@
     },
     {
       "name": "COI",
-      "yearPercentage": 0.0655,
+      "yearPercentage": 6.55,
       "inflationModifier": 1.25,
       "capitalization": 12,
       "duration": 48,
