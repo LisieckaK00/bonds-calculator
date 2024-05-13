@@ -30,17 +30,21 @@ case class Bond @JsonCreator() (
     val result = calculateEndValueAcc(period)
 
     println(s"Obligacja: $name")
-    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account")
+    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
 
     result.zipWithIndex.foreach { case (row, index) =>
       println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
-        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f")
+        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
     }
+
+//    val lastRow = result.last
+//    println(f"${lastRow(0)}%12.0f | ${lastRow(2)}%8.0f | ${lastRow(3)}%9.2f | ${lastRow(5)}%10.2f | " +
+//      f"${lastRow(6)}%10.4f | ${lastRow(7)}%13.2f | ${lastRow(8)}%7.2f | ${lastRow(9)}%10.2f | ${lastRow(10)}%7.2f")
 
   }
 
   private def calculateEndValueAcc(period: Int): Array[Array[Double]] = {
-    val result: Array[Array[Double]] = Array.fill[Double](period, 11)(-1.0)
+    val result: Array[Array[Double]] = Array.fill[Double](period, 12)(-1.0)
 
     result(0)(0) = 1
     result(0)(2) = quantity
@@ -48,16 +52,17 @@ case class Bond @JsonCreator() (
     result(0)(4) = quantity * startPrice
     result(0)(5) = quantity * startPrice
     result(0)(10) = if capitalization == 1 then (100 * (makeDecimalPercentage(yearPercentage) / 12) * 0.81) else 0
+    result(0)(11) = Math.max(result(0)(10), 100)
 
     for row <- 0 until period do
-      for col <- 0 until 11 do
+      for col <- 0 until 12 do
         if result(row)(col) == -1.0 then
             result(row)(col) = col match {
             case 0 => result(row - 1)(col) + 1
             case 1 => if result(row)(0) % duration == 0 then 1 else 0
-            case 2 => if bond_type == "dist" && result(row)(1) == 1 then
+            case 2 => if bond_type == "dist" && result(row-1)(1) == 1 then
                           floor(result(row-1)(9) / change) + floor(result(row-1)(10)/100)
-                      else if bond_type == "acc" && result(row)(1) == 1 then
+                      else if bond_type == "acc" && result(row-1)(1) == 1 then
                         floor(result(row-1)(7) / change)
                       else result(row-1)(2)
             case 3 => if  bond_type == "dist" && result(row-1)(1) == 1 then
@@ -83,7 +88,10 @@ case class Bond @JsonCreator() (
                         if result(row)(1) == 1 then 0
                         else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
                       else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
-            case 9 => result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(4)) * 0.19
+            case 9 => if result(row)(1) == 1 then
+                        result(row)(2) * result(row)(3)
+                        else
+                          result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(4)) * 0.19
             case 10 => if bond_type == "dist" then
                         if result(row)(1) == 1 then
                           (result(row)(7) - result(row)(3)) * 0.81 + result(row)(3) - floor(result(row)(7) / change) * change + result(row-1)(10)
@@ -93,6 +101,7 @@ case class Bond @JsonCreator() (
                       else if bond_type == "acc" && result(row)(1) == 1 then
                         result(row)(7) - result(row)(3) +  result(row-1)(10)
                       else result(row-1)(10)
+            case 11 => Math.max(result(row-1)(11), result(row)(10) + result(row)(9))
             }
 
       if row > 0 && result(row-1)(3) != result(row)(3) then
