@@ -79,11 +79,14 @@ case class Bond @JsonCreator() (
                       else makeDecimalPercentage(yearPercentage)
             case 7 => val multiplier: Double = if result(row)(0) % capitalization != 0 then result(row)(0) % capitalization else capitalization
                       result(row)(5) * (1 + (result(row)(6) * (multiplier / 12)))
-            case 8 => if result(row)(1) == 1 then 0 else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
+            case 8 => if bond_type == "acc" then
+                        if result(row)(1) == 1 then 0
+                        else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
+                      else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
             case 9 => result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(4)) * 0.19
             case 10 => if bond_type == "dist" then
                         if result(row)(1) == 1 then
-                          result(row)(7) - floor(result(row)(7) / change) * change + result(row-1)(10)
+                          (result(row)(7) - result(row)(3)) * 0.81 + result(row)(3) - floor(result(row)(7) / change) * change + result(row-1)(10)
                         else if result(row)(0) % capitalization == 0 then
                           (result(row)(7) - result(row)(4)) * 0.81 + result(row-1)(10)
                         else result(row-1)(10)
