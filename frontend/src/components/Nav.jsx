@@ -1,4 +1,5 @@
-import { Link, Breadcrumbs } from '@mui/material'
+import { Breadcrumbs } from '@mui/material'
+import { Link } from 'react-router-dom';
 
 function handleClick(event) {
     event.preventDefault();
@@ -24,7 +25,7 @@ export default function Nav() {
                     key={index}
                     underline="hover"
                     color={breadcrumb.current ? 'primary' : 'text.primary'}
-                    href={breadcrumb.href}
+                    to={breadcrumb.href} // Użyj "to" zamiast "href"
                     aria-current={breadcrumb.current ? 'page' : undefined}
                     style={{
                         color: breadcrumb.current ? undefined : 'white', 
@@ -33,7 +34,7 @@ export default function Nav() {
                         fontWeight: breadcrumb.current ? 600 : 400
                     }}
                 >
-                    {breadcrumb.label}
+                {breadcrumb.label}
                 </Link>
                 ))}
             </Breadcrumbs>
