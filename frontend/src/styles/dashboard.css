@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 .chart--wrapper {
@@ -9,7 +10,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 40px;
+    margin-top: 80px;
 }
 
 .chart--text {
@@ -18,4 +19,10 @@
     margin-top: 30px;
     color: #fff;
     text-transform: uppercase;
+}
+
+.table--wrapper {
+    width: 65vw;
+    margin-top: 100px;
+    margin-bottom: 100px;
 }

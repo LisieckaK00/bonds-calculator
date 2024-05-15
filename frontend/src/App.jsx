@@ -23,14 +23,14 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/overview" element={<Dashboard type="Overview"/>} />
-            <Route path="/ots" element={<Dashboard type="Ots" />} />
-            <Route path="/ror" element={<Dashboard type="Ror" />} />
-            <Route path="/dor" element={<Dashboard type="Dor" />} />
-            <Route path="/tos" element={<Dashboard type="Tos" />} />
-            <Route path="/coi" element={<Dashboard type="Coi" />} />
-            <Route path="/edo" element={<Dashboard type="Edo" />} />
-            <Route path="/ros" element={<Dashboard type="Ros" />} />
-            <Route path="/rod" element={<Dashboard type="Rod" />} />
+            <Route path="/ots" element={<Dashboard type="OTS" />} />
+            <Route path="/ror" element={<Dashboard type="ROR" />} />
+            <Route path="/dor" element={<Dashboard type="DOR" />} />
+            <Route path="/tos" element={<Dashboard type="TOS" />} />
+            <Route path="/coi" element={<Dashboard type="COI" />} />
+            <Route path="/edo" element={<Dashboard type="EDO" />} />
+            <Route path="/ros" element={<Dashboard type="ROS" />} />
+            <Route path="/rod" element={<Dashboard type="ROD" />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
