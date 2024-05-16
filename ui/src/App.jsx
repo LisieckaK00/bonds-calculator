@@ -22,7 +22,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
-            <Route path="/overview" element={<Dashboard type="Overview"/>} />
+            <Route path="/overview" element={<Dashboard type="Overview" />} />
             <Route path="/ots" element={<Dashboard type="OTS" />} />
             <Route path="/ror" element={<Dashboard type="ROR" />} />
             <Route path="/dor" element={<Dashboard type="DOR" />} />
@@ -39,4 +39,3 @@ function App() {
 }
 
 export default App
-
