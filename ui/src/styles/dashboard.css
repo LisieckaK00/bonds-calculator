@@ -1,0 +1,28 @@
+.dashboard--wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart--wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80px;
+}
+
+.chart--text {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 30px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.table--wrapper {
+    width: 65vw;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
