@@ -4,7 +4,6 @@
 //  bondListFromFile.bonds.foreach(_.calculate(120))
 //  println(bondListFromFile)
   bondListFromFile.bonds.find(_.name == "TOS").foreach(_.calculate(39))
-
 }
 
 

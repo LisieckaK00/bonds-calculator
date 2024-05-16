@@ -32,6 +32,8 @@ case class Bond @JsonCreator() (
     println(s"Obligacja: $name")
     println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
 
+    // all rows
+
     result.zipWithIndex.foreach { case (row, index) =>
       println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
         f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
@@ -47,6 +49,16 @@ case class Bond @JsonCreator() (
 //    val lastRow = result.last
 //    println(f"${lastRow(0)}%12.0f | ${lastRow(2)}%8.0f | ${lastRow(3)}%9.2f | ${lastRow(5)}%10.2f | " +
 //      f"${lastRow(6)}%10.4f | ${lastRow(7)}%13.2f | ${lastRow(8)}%7.2f | ${lastRow(9)}%10.2f | ${lastRow(10)}%7.2f")
+
+    // last row
+
+//    if (result.nonEmpty) {
+//      val lastRow = result.last
+//      println(f"${lastRow(0)}%12.0f | ${lastRow(2)}%8.0f | ${lastRow(3)}%9.2f | ${lastRow(5)}%10.2f | " +
+//        f"${lastRow(6)}%10.4f | ${lastRow(7)}%13.2f | ${lastRow(8)}%7.2f | ${lastRow(9)}%10.2f | ${lastRow(10)}%7.2f")
+//
+//      println()
+//    }
 
   }
 
