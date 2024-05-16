@@ -29,12 +29,19 @@ case class Bond @JsonCreator() (
   def calculate(period: Int): Unit = {
     val result = calculateEndValueAcc(period)
 
+//    println(s"Obligacja: $name")
+//    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
+//
+//    result.zipWithIndex.foreach { case (row, index) =>
+//      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
+//        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
+//    }
+
     println(s"Obligacja: $name")
-    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
+    println(" Final Result")
 
     result.zipWithIndex.foreach { case (row, index) =>
-      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
-        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
+      println(f"${row(11)}%7.2f")
     }
 
 //    val lastRow = result.last
@@ -52,7 +59,7 @@ case class Bond @JsonCreator() (
     result(0)(4) = quantity * startPrice
     result(0)(5) = quantity * startPrice
     result(0)(10) = if capitalization == 1 then (100 * (makeDecimalPercentage(yearPercentage) / 12) * 0.81) else 0
-    result(0)(11) = Math.max(result(0)(10), 100)
+    result(0)(11) = Math.max(result(0)(10), 0)
 
     for row <- 0 until period do
       for col <- 0 until 12 do
@@ -99,9 +106,12 @@ case class Bond @JsonCreator() (
                           (result(row)(7) - result(row)(4)) * 0.81 + result(row-1)(10)
                         else result(row-1)(10)
                       else if bond_type == "acc" && result(row)(1) == 1 then
-                        result(row)(7) - result(row)(3) +  result(row-1)(10)
+                        (result(row)(7) - result(row)(3))*0.81 +  result(row-1)(10)
                       else result(row-1)(10)
-            case 11 => Math.max(result(row-1)(11), result(row)(10) + result(row)(9))
+            case 11 => if result(row)(1) == 1 then
+                        result(row)(10)
+                        else
+                        result(row-1)(10) + result(row)(9) - result(row)(2) * result(row)(3)
             }
 
       if row > 0 && result(row-1)(3) != result(row)(3) then
