@@ -29,20 +29,20 @@ case class Bond @JsonCreator() (
   def calculate(period: Int): Unit = {
     val result = calculateEndValueAcc(period)
 
-//    println(s"Obligacja: $name")
-//    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
-//
-//    result.zipWithIndex.foreach { case (row, index) =>
-//      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
-//        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
-//    }
-
     println(s"Obligacja: $name")
-    println(" Final Result")
+    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
 
     result.zipWithIndex.foreach { case (row, index) =>
-      println(f"${row(11)}%7.2f")
+      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
+        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
     }
+//
+//    println(s"Obligacja: $name")
+//    println(" Final Result")
+//
+//    result.zipWithIndex.foreach { case (row, index) =>
+//      println(f"${row(11)}%7.2f")
+//    }
 
 //    val lastRow = result.last
 //    println(f"${lastRow(0)}%12.0f | ${lastRow(2)}%8.0f | ${lastRow(3)}%9.2f | ${lastRow(5)}%10.2f | " +
@@ -111,7 +111,7 @@ case class Bond @JsonCreator() (
             case 11 => if result(row)(1) == 1 then
                         result(row)(10)
                         else
-                        result(row-1)(10) + result(row)(9) - result(row)(2) * result(row)(3)
+                        result(row)(10) + result(row)(9) - result(row)(2) * result(row)(3)
             }
 
       if row > 0 && result(row-1)(3) != result(row)(3) then
