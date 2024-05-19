@@ -4,3 +4,4 @@
 # ~~~~
 
 GET /api/data           controllers.DataController.getData
+GET /api/bonds/:bondName/:period           controllers.DataController.getByName(bondName: String, period: Int)
