@@ -28,6 +28,9 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
     val resultValue: Array[Array[Double]] = result.getOrElse(Array.empty[Array[Double]])
     val json = Json.toJson(resultValue)
     Ok(json)
+
+
+
   }
 }
 

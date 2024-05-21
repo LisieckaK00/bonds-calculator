@@ -1,40 +1,49 @@
-import Nav from "../components/Nav"
-import "../styles/dashboard.css"
+import React, { useEffect, useState } from "react";
+import axios from 'axios';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Nav from "../components/Nav";
+import "../styles/dashboard.css";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useTheme } from '@mui/material/styles';
-import {
-  processData,
-  otsData,
-  rorData,
-  dorData,
-  tosData,
-  coiData,
-  edoData,
-  rosData,
-  rodData,
-} from '../data.js';
-
-
-const processedOTSData = processData(otsData);
-const processedRORData = processData(rorData);
-const processedDORData = processData(dorData);
-const processedTOSData = processData(tosData);
-const processedCOIData = processData(coiData);
-const processedEDOData = processData(edoData);
-const processedROSData = processData(rosData);
-const processedRODData = processData(rodData);
-const rows = [
-  { col1: 'Data 1.1', col2: 'Data 1.2', col3: 'Data 1.3', col4: 'Data 1.4', col5: 'Data 1.5', col6: 'Data 1.6', col7: 'Data 1.7', col8: 'Data 1.8', col9: 'Data 1.9', col10: 'Data 1.10', col11: 'Data 1.11' },
-  { col1: 'Data 2.1', col2: 'Data 2.2', col3: 'Data 2.3', col4: 'Data 2.4', col5: 'Data 2.5', col6: 'Data 2.6', col7: 'Data 2.7', col8: 'Data 2.8', col9: 'Data 2.9', col10: 'Data 2.10', col11: 'Data 2.11' },
-  { col1: 'Data 3.1', col2: 'Data 3.2', col3: 'Data 3.3', col4: 'Data 3.4', col5: 'Data 3.5', col6: 'Data 3.6', col7: 'Data 3.7', col8: 'Data 3.8', col9: 'Data 3.9', col10: 'Data 3.10', col11: 'Data 3.11' },
-  { col1: 'Data 4.1', col2: 'Data 4.2', col3: 'Data 4.3', col4: 'Data 4.4', col5: 'Data 4.5', col6: 'Data 4.6', col7: 'Data 4.7', col8: 'Data 4.8', col9: 'Data 4.9', col10: 'Data 4.10', col11: 'Data 4.11' },
-];
 
 export default function Dashboard(props) {
+  const [chartData, setChartData] = useState([]);
+  const [tableData, setTableData] = useState([])
 
-  const theme = useTheme();
-  const xTicks = Array.from({ length: 144 }, (_, i) => i + 1);
+  const months = 60;
+
+  useEffect(() => {
+    axios.get(`http://localhost:9000/api/bonds/${props.type}/${months}`)
+      .then(response => {
+        setTableData([]);
+        const newData = response.data.map((item) => ({
+          month: item[0],
+          value: Math.round(item[item.length - 1] * 100) / 100
+        }));
+        setChartData(newData);
+        console.log(response)
+
+        const apiData = response.data.map(item => ({
+          col1: Math.round((item[0] || 0) * 100) / 100,
+          col2: Math.round((item[1] || 0) * 100) / 100,
+          col3: Math.round((item[2] || 0) * 100) / 100,
+          col4: Math.round((item[3] || 0) * 100) / 100,
+          col5: Math.round((item[4] || 0) * 100) / 100,
+          col6: Math.round((item[5] || 0) * 100) / 100,
+          col7: Math.round((item[6] || 0) * 10000) / 10000,
+          col8: Math.round((item[7] || 0) * 100) / 100,
+          col9: Math.round((item[8] || 0) * 100) / 100,
+          col10: Math.round((item[9] || 0) * 100) / 100,
+          col11: Math.round((item[10] || 0) * 100) / 100,
+          col12: Math.round((item[11] || 0) * 100) / 100
+        }));
+        
+        setTableData(prevData => [...prevData, ...apiData]);
+
+
+      })
+      .catch(error => console.error('Error:', error));
+  }, [props.type]);  
+
   const colorMap = {
     'OTS': 'rgb(30,185,128)',
     'ROR': '#dc004e',
@@ -47,103 +56,67 @@ export default function Dashboard(props) {
     'defaultColor': 'rgb(30,185,128)'
   };
 
-  const dataKey = `processed${props.type}Data`;
-
   return (
     <>
-
-      <div className="dashboard--wrapper">
-        <Nav />
-
-        <div className="chart--wrapper">
-          <p className="chart--text">Chart for <span style={{ color: colorMap[props.type] || 'defaultColor' }}>{props.type}</span></p>
-          <div style={{ width: '70vw', height: 500 }}>
-            <ResponsiveContainer>
-              <LineChart
-                width={500}
-                height={300}
-                margin={{
-                  top: 5, right: 30, left: 20, bottom: 5,
-                }}
-              >
-
-                <XAxis
-                  dataKey="month"
-                  ticks={xTicks}
-                  type="number"
-                  domain={[1, 24]}
-                  allowDecimals={false}
-                  scale="linear"
-                />
-                <YAxis
-                  domain={[100, 'auto']}
-                />
-                <Tooltip />
-                <Legend />
-
-                {props.type === 'Overview' ? (
-                  <>
-                    <Line type="monotone" dataKey="sum" data={processedOTSData} name="OTS" stroke={theme.palette.primary.main} dot={{ r: 0, fill: theme.palette.primary.main, opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedRORData} name="ROR" stroke={theme.palette.secondary.main} dot={{ r: 0, fill: theme.palette.secondary.main, opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedDORData} name="DOR" stroke="#82ca9d" dot={{ r: 0, fill: '#82ca9d', opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedTOSData} name="TOS" stroke="#ff7300" dot={{ r: 0, fill: '#ff7300', opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedCOIData} name="COI" stroke="#8884d8" dot={{ r: 0, fill: '#8884d8', opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedEDOData} name="EDO" stroke="#8dd1e1" dot={{ r: 0, fill: '#8dd1e1', opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedROSData} name="ROS" stroke="#ffc658" dot={{ r: 0, fill: '#ffc658', opacity: 0.5 }} />
-                    <Line type="monotone" dataKey="sum" data={processedRODData} name="ROD" stroke="#d0ed57" dot={{ r: 0, fill: '#d0ed57', opacity: 0.5 }} />
-                  </>
-                ) : (
-                  <>
-                    <Line type="monotone" dataKey="sum" data={eval(dataKey)} name={props.type} stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0, fill: colorMap[props.type] || 'defaultColor', opacity: 0.5 }} />
-                  </>
-                )}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="dashboard--wrapper">
+      <Nav />
+      <div className="chart--wrapper">
+        <p className="chart--text">Chart for <span style={{ color: colorMap[props.type] || 'defaultColor' }}>{props.type}</span></p>
+        <div style={{ width: '70vw', height: '500px' }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <XAxis dataKey="month" type="number" domain={[1, months]} allowDecimals={false} ticks={Array.from({length: months}, (_, i) => i + 1)} />
+              <YAxis domain={[0, 'auto']} />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="value" stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0 }} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
         <div className="table--wrapper">
-          <TableContainer component={Paper} sx={{
-            backgroundColor: 'transparent', // Ustawienie przezroczystego tła
-            color: 'white' // Ustawienie białego tekstu
-          }}>
-            <Table sx={{ width: '65vw', border: '1px solid white' }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 1</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 2</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 3</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 4</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 5</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 6</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 7</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 8</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 9</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 10</TableCell>
-                  <TableCell sx={{ border: '1px solid white', color: 'white' }}>Column 11</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col1}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col2}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col3}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col4}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col5}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col6}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col7}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col8}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col9}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col10}</TableCell>
-                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col11}</TableCell>
+            <TableContainer component={Paper} sx={{
+              backgroundColor: 'transparent', 
+              color: 'white'
+            }}>
+              <Table sx={{ width: '65vw', border: '1px solid white' }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>End of month</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Quantity</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Buy Price</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Base Price</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Percentage</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Current Value</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Penalty</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Withdrawal</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Account</TableCell>
+                    <TableCell sx={{ border: '1px solid white', color: 'white' }}>Final result</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {tableData.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col1}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col3}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col4}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col6}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col7}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col8}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col9}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col10}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col11}</TableCell>
+                      <TableCell sx={{ border: '1px solid white', color: 'white' }}>{row.col12}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
         </div>
       </div>
     </>
   );
-
 }

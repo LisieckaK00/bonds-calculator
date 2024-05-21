@@ -41,6 +41,7 @@ case class Bond @JsonCreator() (
         f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
     }
 
+
   }
 
   def calculateEndValue(period: Int): Array[Array[Double]] = {
@@ -70,7 +71,7 @@ case class Bond @JsonCreator() (
                       else if bond_type == "acc" && result(row-1)(1) == 1 then
                         result(row)(2) * change
                       else result(row-1)(3)
-            case 4 => if result(row)(1) == 1 then result(row)(2) * 100 else result(row-1)(4)
+            case 4 => if result(row-1)(1) == 1 then result(row)(2) * 100 else result(row-1)(4)
             case 5 => if bond_type == "acc" then
                         if result(row-1)(1) == 1 then
                           result(row)(4)
@@ -104,14 +105,14 @@ case class Bond @JsonCreator() (
             case 11 => if result(row)(1) == 1 then
                         result(row)(10)
                         else
-                        result(row)(10) + result(row)(9) - result(row)(2) * result(row)(3)
+                        result(row)(10) + result(row)(9) - result(row)(3)
             }
 
       if row > 0 && result(row-1)(3) != result(row)(3) then
         result(row)(10) = result(row)(10) + 0.1 * result(row)(2)
 
       if row > 0 && result(row-1)(2) != result(row)(2) then
-        result(row)(10) -= result(row)(3) * result(row)(2) - 100
+        result(row)(10) -= result(row)(3) - 100
 
     result
 
