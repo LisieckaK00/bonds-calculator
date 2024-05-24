@@ -9,40 +9,40 @@ export default function Dashboard(props) {
   const [chartData, setChartData] = useState([]);
   const [tableData, setTableData] = useState([])
 
-  const months = 60;
+  const months = 480;
 
   useEffect(() => {
     axios.get(`http://localhost:9000/api/bonds/${props.type}/${months}`)
       .then(response => {
         setTableData([]);
-        const newData = response.data.map((item) => ({
-          month: item[0],
-          value: Math.round(item[item.length - 1] * 100) / 100
+        const newData = response.data.map((value, index) => ({
+          month: index + 1,  
+          value: Math.round(value * 100) / 100       
         }));
         setChartData(newData);
-        console.log(response)
-
-        const apiData = response.data.map(item => ({
-          col1: Math.round((item[0] || 0) * 100) / 100,
-          col2: Math.round((item[1] || 0) * 100) / 100,
-          col3: Math.round((item[2] || 0) * 100) / 100,
-          col4: Math.round((item[3] || 0) * 100) / 100,
-          col5: Math.round((item[4] || 0) * 100) / 100,
-          col6: Math.round((item[5] || 0) * 100) / 100,
-          col7: Math.round((item[6] || 0) * 10000) / 10000,
-          col8: Math.round((item[7] || 0) * 100) / 100,
-          col9: Math.round((item[8] || 0) * 100) / 100,
-          col10: Math.round((item[9] || 0) * 100) / 100,
-          col11: Math.round((item[10] || 0) * 100) / 100,
-          col12: Math.round((item[11] || 0) * 100) / 100
-        }));
+        // const apiData = response.data.map(item => ({
+        //   col1: Math.round((item[0] || 0) * 100) / 100,
+        //   col2: Math.round((item[1] || 0) * 100) / 100,
+        //   col3: Math.round((item[2] || 0) * 100) / 100,
+        //   col4: Math.round((item[3] || 0) * 100) / 100,
+        //   col5: Math.round((item[4] || 0) * 100) / 100,
+        //   col6: Math.round((item[5] || 0) * 100) / 100,
+        //   col7: Math.round((item[6] || 0) * 10000) / 10000,
+        //   col8: Math.round((item[7] || 0) * 100) / 100,
+        //   col9: Math.round((item[8] || 0) * 100) / 100,
+        //   col10: Math.round((item[9] || 0) * 100) / 100,
+        //   col11: Math.round((item[10] || 0) * 100) / 100,
+        //   col12: Math.round((item[11] || 0) * 100) / 100
+        // }));
         
-        setTableData(prevData => [...prevData, ...apiData]);
+        // setTableData(prevData => [...prevData, ...apiData]);
 
 
       })
       .catch(error => console.error('Error:', error));
   }, [props.type]);  
+
+  console.log(chartData)
 
   const colorMap = {
     'OTS': 'rgb(30,185,128)',
@@ -69,14 +69,14 @@ export default function Dashboard(props) {
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
               <XAxis dataKey="month" type="number" domain={[1, months]} allowDecimals={false} ticks={Array.from({length: months}, (_, i) => i + 1)} />
-              <YAxis domain={[0, 'auto']} />
+              <YAxis domain={[10000, 'auto']} />
               <Tooltip />
               <Legend />
               <Line type="monotone" dataKey="value" stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div className="table--wrapper">
+        {/* <div className="table--wrapper">
             <TableContainer component={Paper} sx={{
               backgroundColor: 'transparent', 
               color: 'white'
@@ -114,7 +114,7 @@ export default function Dashboard(props) {
                 </TableBody>
               </Table>
             </TableContainer>
-          </div>
+        </div> */}
         </div>
       </div>
     </>

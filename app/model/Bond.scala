@@ -1,21 +1,20 @@
 package model
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonProperty}
-
+import scala.Array
 import scala.math.floor
 
 case class Bond @JsonCreator() (
    @JsonProperty("name") name: String,
-   @JsonProperty("yearPercentage") yearPercentage: Double,
-   @JsonProperty("inflationModifier") inflationModifier: Double,
+   @JsonProperty("percentage") percentage: Double,
+   @JsonProperty("duration") duration: Double,
    @JsonProperty("capitalization") capitalization: Int,
-   @JsonProperty("duration") duration: Int,
+   @JsonProperty("price") price: Int,
+   @JsonProperty("change") change: Double,
    @JsonProperty("penalty") penalty: Double,
-   @JsonProperty("quantity") quantity: Int,
+   @JsonProperty("multiplier") multiplier: Double,
+   @JsonProperty("multiplierActivation") multiplierActivation: Int,
    @JsonProperty("type") bond_type: String,
-   @JsonProperty("distribution") distribution: Option[Int],
-   @JsonProperty("startPrice") startPrice: Double,
-   @JsonProperty("change") change: Double
  ) {
 
   val inflation: Double = 5
@@ -28,93 +27,123 @@ case class Bond @JsonCreator() (
     BigDecimal(percentage / 100).setScale(4, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
-  def calculateAndPrint(period: Int): Unit = {
-    val result = calculateEndValue(period)
 
-    println(s"Obligacja: $name")
-    println("End of Month | Quantity | Buy Price | Base Price | Percentage | Current Value | Penalty | Withdrawal | Account | Final Result")
+  // yes, I know it's pretty bad, but it works somehow
+  var monthsArray: Array[Int] = _
+  var quantityArray: Array[Int] = _
+  var buyPriceArray: Array[Double] = _
+  var basePriceArray: Array[Double] = _
+  var percentageArray: Array[Double] = _
+  var grossValueArray: Array[Double] = _
+  var penaltyArray: Array[Double] = _
+  var withdrawalArray: Array[Double] = _
+  var accountArray: Array[Double] = _
+  var finalResultArray: Array[Double] = _
 
-    // all rows
-
-    result.zipWithIndex.foreach { case (row, index) =>
-      println(f"${row(0)}%12.0f | ${row(2)}%8.0f | ${row(3)}%9.2f | ${row(5)}%10.2f | " +
-        f"${row(6)}%10.4f | ${row(7)}%13.2f | ${row(8)}%7.2f | ${row(9)}%10.2f | ${row(10)}%7.2f | ${row(11)}%7.2f"  )
-    }
-
-
+  def initializeArrays(period: Int): Unit = {
+    monthsArray = Array.ofDim[Int](period)
+    quantityArray = Array.fill[Int](period)(0)
+    buyPriceArray = Array.fill[Double](period)(0.0)
+    basePriceArray = Array.fill[Double](period)(0.0)
+    percentageArray = Array.fill[Double](period)(0.0)
+    grossValueArray = Array.fill[Double](period)(0.0)
+    penaltyArray = Array.fill[Double](period)(0.0)
+    withdrawalArray = Array.fill[Double](period)(0.0)
+    accountArray = Array.fill[Double](period)(0.0)
+    finalResultArray = Array.fill[Double](period)(0.0)
   }
 
-  def calculateEndValue(period: Int): Array[Array[Double]] = {
-    val result: Array[Array[Double]] = Array.fill[Double](period, 12)(-1.0)
-
-    result(0)(0) = 1
-    result(0)(2) = quantity
-    result(0)(3) = quantity * startPrice
-    result(0)(4) = quantity * startPrice
-    result(0)(5) = quantity * startPrice
-    result(0)(10) = if capitalization == 1 then (100 * (makeDecimalPercentage(yearPercentage) / 12) * 0.81) else 0
-    result(0)(11) = Math.max(result(0)(10), 0)
-
-    for row <- 0 until period do
-      for col <- 0 until 12 do
-        if result(row)(col) == -1.0 then
-            result(row)(col) = col match {
-            case 0 => result(row - 1)(col) + 1
-            case 1 => if result(row)(0) % duration == 0 then 1 else 0
-            case 2 => if bond_type == "dist" && result(row-1)(1) == 1 then
-                          floor(result(row-1)(9) / change) + floor(result(row-1)(10)/100)
-                      else if bond_type == "acc" && result(row-1)(1) == 1 then
-                        floor(result(row-1)(7) / change)
-                      else result(row-1)(2)
-            case 3 => if  bond_type == "dist" && result(row-1)(1) == 1 then
-                        floor(result(row-1)(7) / change) * change + floor(result(row-1)(10)/100) * 100
-                      else if bond_type == "acc" && result(row-1)(1) == 1 then
-                        result(row)(2) * change
-                      else result(row-1)(3)
-            case 4 => if result(row-1)(1) == 1 then result(row)(2) * 100 else result(row-1)(4)
-            case 5 => if bond_type == "acc" then
-                        if result(row-1)(1) == 1 then
-                          result(row)(4)
-                        else if result(row)(0) % capitalization != 1 then result(row-1)(5)
-                        else result(row-1)(7)
-                      else result(row)(4)
-            case 6 => if result(row)(0) <= capitalization then
-                        makeDecimalPercentage(yearPercentage)
-                      else if inflationModifier != 0 && result(row)(0) > capitalization then
-                        makeDecimalPercentage(inflation + inflationModifier)
-                      else makeDecimalPercentage(yearPercentage)
-            case 7 => val multiplier: Double = if result(row)(0) % capitalization != 0 then result(row)(0) % capitalization else capitalization
-                      result(row)(5) * (1 + (result(row)(6) * (multiplier / 12)))
-            case 8 => if bond_type == "acc" then
-                        if result(row)(1) == 1 then 0
-                        else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
-                      else Math.min(result(row)(7)-result(row)(4), result(row)(2) * penalty)
-            case 9 => if result(row)(1) == 1 then
-                        result(row)(2) * result(row)(3)
-                        else
-                          result(row)(7) - result(row)(8) - (result(row)(7) - result(row)(8) - result(row)(4)) * 0.19
-            case 10 => if bond_type == "dist" then
-                        if result(row)(1) == 1 then
-                          (result(row)(7) - result(row)(3)) * 0.81 + result(row)(3) - floor(result(row)(7) / change) * change + result(row-1)(10)
-                        else if result(row)(0) % capitalization == 0 then
-                          (result(row)(7) - result(row)(4)) * 0.81 + result(row-1)(10)
-                        else result(row-1)(10)
-                      else if bond_type == "acc" && result(row)(1) == 1 then
-                        (result(row)(7) - result(row)(3))*0.81 +  result(row-1)(10)
-                      else result(row-1)(10)
-            case 11 => if result(row)(1) == 1 then
-                        result(row)(10)
-                        else
-                        result(row)(10) + result(row)(9) - result(row)(3)
-            }
-
-      if row > 0 && result(row-1)(3) != result(row)(3) then
-        result(row)(10) = result(row)(10) + 0.1 * result(row)(2)
-
-      if row > 0 && result(row-1)(2) != result(row)(2) then
-        result(row)(10) -= result(row)(3) - 100
-
-    result
-
+  private def calculatePercentage(month: Int): Unit = {
+    percentageArray(month) = if multiplier == 0 || month + 1 <= multiplierActivation  then
+      makeDecimalPercentage(percentage)
+    else
+      makeDecimalPercentage(inflation +  multiplier)
   }
+  
+  private def calculateGrossValue(month: Int): Unit = {
+    val currentMultiplier = if (month + 1) % 12 != 0 then (month + 1) % 12 else 12
+    grossValueArray(month) = basePriceArray(month) * (1 + (percentageArray(month) * currentMultiplier) / 12 )
+  }
+
+  private def calculatePenalty(month: Int): Unit = {
+    penaltyArray(month) = if month + 1 % duration == 0 then
+      0
+    else Math.min(quantityArray(month) * penalty, grossValueArray(month) - quantityArray(month) * penalty)
+  }
+
+  private def calculateWithdrawal(month: Int): Unit = {
+    withdrawalArray(month) = Math.max(quantityArray(month) * buyPriceArray(month) +
+      (grossValueArray(month) - penaltyArray(month) - quantityArray(month) * buyPriceArray(month)) * 0.81,
+      quantityArray(month) * price)
+  }
+
+  private def calculateAccount(month: Int): Unit = {
+    val temp_val = quantityArray(month - 1) * price + (withdrawalArray(month - 1)
+      - (quantityArray(month - 1) * price) ) + accountArray(month - 1)
+
+    accountArray(month) = if month % duration == 0 then
+      temp_val - (floor(temp_val / change).toInt * change)
+    else
+      accountArray(month - 1)
+  }
+
+  private def calculateFinalResult(month: Int): Unit = {
+    finalResultArray(month) = withdrawalArray(month) + accountArray(month)
+  }
+
+  private def calculateQuantity(month: Int): Unit = {
+    quantityArray(month) = if month % duration == 0 then
+      floor((withdrawalArray(month - 1) + accountArray(month - 1)) / change).toInt
+    else quantityArray(month - 1)
+  }
+
+  private def calculateBuyPrice(month: Int): Unit = {
+    buyPriceArray(month) = if month % duration == 0 then change else buyPriceArray(month - 1)
+  }
+
+  private def calculateBasePrice(month: Int): Unit = {
+    basePriceArray(month) = if month % duration == 0 then
+      quantityArray(month) * price
+    else if month % capitalization == 0 then
+      grossValueArray(month - 1)
+    else basePriceArray(month - 1)
+  }
+
+
+  def calculateEndValue(period: Int): Array[Double] = {
+    initializeArrays(period)
+
+    // temporary values, some of them are necessary
+    quantityArray(0) = 100
+    buyPriceArray(0) = 100
+    basePriceArray(0) = 10000
+    percentageArray(0) = 0.064
+    grossValueArray(0) = 10000.53
+    penaltyArray(0) = 53.333
+    withdrawalArray(0) = 10000
+    accountArray(0) = 0
+    finalResultArray(0) = 10000
+
+    monthsArray.indices.foreach(i => monthsArray(i) = i + 1)
+
+    for month <- 1 until period do
+      calculatePercentage(month)
+      calculateBuyPrice(month)
+      calculateQuantity(month)
+      calculateBasePrice(month)
+      calculateGrossValue(month)
+      calculatePenalty(month)
+      calculateWithdrawal(month)
+      calculateAccount(month)
+      calculateFinalResult(month)
+
+    println(f"Month | Quantity | BuyPrice | BasePrice | Percentage | GrossValue | Penalty | Withdrawal | Account | FinalResult")
+    for month <- 0 until period do
+      println(f"${monthsArray(month)}%6d | ${quantityArray(month)}%8d | ${buyPriceArray(month)}%8.2f | ${basePriceArray(month)}%9.2f | ${percentageArray(month)}%10.4f | ${grossValueArray(month)}%10.2f | ${penaltyArray(month)}%7.2f | ${withdrawalArray(month)}%10f | ${accountArray(month)}%7.2f | ${finalResultArray(month)}%11.2f")
+
+    finalResultArray
+  }
+
+
 }
+

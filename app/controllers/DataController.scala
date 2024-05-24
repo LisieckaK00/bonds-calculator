@@ -10,7 +10,7 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
 
   // Definiowanie implicitnych formatów
   implicit val doubleArrayWrites: Writes[Array[Double]] = Writes.arrayWrites[Double]
-  implicit val doubleArrayArrayWrites: Writes[Array[Array[Double]]] = Writes.arrayWrites[Array[Double]]
+//  implicit val doubleArrayArrayWrites: Writes[Array[Array[Double]]] = Writes.arrayWrites[Array[Double]]
 
   def getData = Action { implicit request: Request[AnyContent] =>
     val randomData = Seq("RandomData1", "RandomData2", "RandomData3")
@@ -24,13 +24,12 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
   def getByName(bondName: String, period: Int) = Action {
     val reader: JSONReader = new JSONReader()
     val bondListFromFile: BondList = reader.loadFromFile("data.json")
-    val result: Option[Array[Array[Double]]] = bondListFromFile.bonds.find(_.name == bondName).map(_.calculateEndValue(period))
-    val resultValue: Array[Array[Double]] = result.getOrElse(Array.empty[Array[Double]])
+    val result: Option[Array[Double]] = bondListFromFile.bonds.find(_.name == bondName).map(_.calculateEndValue(period))
+    val resultValue: Array[Double] = result.getOrElse(Array.empty[Double]) 
+
+
     val json = Json.toJson(resultValue)
     Ok(json)
-
-
-
   }
 }
 
