@@ -11,7 +11,7 @@ export default function Dashboard(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const months = 500;
+  const months = 600;
   const quantity = 50;
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function Dashboard(props) {
       .then(response => {
         const newChartData = response.data.map((row, index) => ({
           month: index + 1,
-          finalResult: Math.round(row[9] * 100) / 100,
+          Result: Math.round(row[9] * 100) / 100,
         }));
         setChartData(newChartData);
 
@@ -77,15 +77,25 @@ export default function Dashboard(props) {
           <p className="chart--text">Chart for <span style={{ color: colorMap[props.type] || 'defaultColor' }}>{props.type}</span></p>
           <div style={{ width: '70vw', height: '500px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={chartData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <XAxis dataKey="month" type="number" domain={[1, months]} allowDecimals={false} ticks={Array.from({ length: months }, (_, i) => i + 1)} />
-                <YAxis domain={[10000, 'auto']} />
+                <LineChart
+                  data={chartData}
+                  margin={{ top: 50, right: 100, left: 20, bottom: 20 }}
+                >
+                <XAxis
+                  dataKey="month"
+                  type="number"
+                  domain={[1, months]}
+                  allowDecimals={false}
+                  ticks={Array.from({ length: months }, (_, i) => i + 1)}
+                  label={{ value: 'Month', position: 'insideBottomRight', offset: -10 }}
+                />
+                <YAxis
+                  domain={[10000, 'auto']}
+                  label={{ value: 'Final Result', position: 'insideTop', offset: -40 }}
+                />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="finalResult" stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0 }} />
+                <Line type="monotone" dataKey="Result" stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
