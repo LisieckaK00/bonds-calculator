@@ -11,8 +11,8 @@ export default function Dashboard(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const months = 189;
-  const quantity = 10;
+  const months = 500;
+  const quantity = 50;
 
   useEffect(() => {
     axios.get(`http://localhost:9000/api/bonds/${props.type}/${quantity}/${months}`)

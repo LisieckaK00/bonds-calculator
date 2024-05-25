@@ -38,7 +38,7 @@ case class Bond @JsonCreator() (
 
   private def calculateGrossValue(month: Int, result: Result): Unit = {
     if (result.grossValueArray(month) == -1.0) {
-      val currentMultiplier = if ((month + 1) % 12 != 0) (month + 1) % 12 else 12
+      val currentMultiplier = if ((month + 1) % capitalization != 0) (month + 1) % capitalization else capitalization
       result.grossValueArray(month) = result.basePriceArray(month) * (1 + (result.percentageArray(month) * currentMultiplier) / 12)
     }
   }
