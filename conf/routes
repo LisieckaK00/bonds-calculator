@@ -3,5 +3,4 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-GET /api/data           controllers.DataController.getData
-GET /api/bonds/:bondName/:period           controllers.DataController.getByName(bondName: String, period: Int)
+GET /api/bonds/:bondName/:quantity/:period           controllers.DataController.getByName(bondName: String, quantity: Int, period: Int)

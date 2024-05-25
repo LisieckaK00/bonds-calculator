@@ -3,8 +3,8 @@
     {
       "name": "OTS",
       "percentage": 3,
-      "duration": 12,
-      "capitalization": 12,
+      "duration": 3,
+      "capitalization": 3,
       "price": 100,
       "change": 100,
       "penalty": 0.75,
