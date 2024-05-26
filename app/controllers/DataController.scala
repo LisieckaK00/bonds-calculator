@@ -8,9 +8,26 @@ import model.{ BondList, JSONReader}
 
 class DataController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
-  // Definiowanie implicitnych formatów
+  // Define implicit formats
   implicit val doubleArrayWrites: Writes[Array[Double]] = Writes.arrayWrites[Double]
   implicit val doubleArrayArrayWrites: Writes[Array[Array[Double]]] = Writes.arrayWrites[Array[Double]]
+
+  implicit val mapWrites: Writes[Map[String, Any]] = new Writes[Map[String, Any]] {
+    def writes(map: Map[String, Any]): JsValue = {
+      Json.obj(map.map {
+        case (key, value) =>
+          key -> (value match {
+            case v: String => Json.toJsFieldJsValueWrapper(v)
+            case v: Int => Json.toJsFieldJsValueWrapper(v)
+            case v: Double => Json.toJsFieldJsValueWrapper(v)
+            case v: Float => Json.toJsFieldJsValueWrapper(v.toDouble)
+            case v: Long => Json.toJsFieldJsValueWrapper(v)
+            case v: Boolean => Json.toJsFieldJsValueWrapper(v)
+            case v => Json.toJsFieldJsValueWrapper(v.toString)
+          })
+      }.toSeq: _*)
+    }
+  }
 
   def getByName(bondName: String, quantity: Int, period: Int) = Action {
     val reader: JSONReader = new JSONReader()
@@ -18,8 +35,15 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
     val result: Option[Array[Array[Double]]] = bondListFromFile.bonds.find(_.name == bondName).map(_.calculateEndValue(quantity, period))
     val resultValue: Array[Array[Double]] = result.getOrElse(Array.empty[Array[Double]])
 
-
     val json = Json.toJson(resultValue)
+    Ok(json)
+  }
+
+  def getAllBondsProperties() = Action {
+    val reader: JSONReader = new JSONReader()
+    val bondListFromFile: BondList = reader.loadFromFile("data.json")
+    val result: List[Map[String, Any]] = bondListFromFile.bonds.map(_.getProperties)
+    val json = Json.toJson(result)
     Ok(json)
   }
 }

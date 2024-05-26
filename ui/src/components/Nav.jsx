@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@mui/material'
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function handleClick(event) {
     event.preventDefault();
@@ -18,6 +18,14 @@ export default function Nav() {
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
             <div role="presentation" onClick={handleClick}>
             <Breadcrumbs maxItems={15} sx={{ fontSize: 24 }}>
+                <Link
+                        underline="hover"
+                        to="/info"
+                        style={{
+                            cursor: 'pointer', 
+                            textDecoration: 'none', 
+                        }}
+                >INFO</Link>
                 {breadcrumbData.map((breadcrumb, index) => (
                 <Link
                     key={index}
@@ -29,12 +37,12 @@ export default function Nav() {
                         color: breadcrumb.current ? undefined : 'white', 
                         cursor: 'pointer', 
                         textDecoration: 'none', 
-                        fontWeight: breadcrumb.current ? 600 : 400 // Bold if current
                     }}
                 >
                 {breadcrumb.label}
                 </Link>
                 ))}
+                
             </Breadcrumbs>
             </div>
         </div>

@@ -1,0 +1,55 @@
+.bonds--wrapper {
+    width: 65vw;
+    margin: 100px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.bond {
+    width: 250px;
+    height: 250px;
+    background-color: rgb(33, 33, 36);
+    border-radius: 5px;
+    padding: 20px;
+    transition: all 0.4s ease;
+}
+
+.bond:hover {
+    cursor: pointer;
+    background-color: rgba(33, 33, 36, 0.75);
+}
+
+.bond > div {
+    height: 50px;
+}
+
+.bond--header {
+    font-weight: 700;
+    font-size: 40px;
+}
+
+.bond--name {
+    display: inline;
+    font-weight: 500;
+    font-size: 32px;
+}
+
+.bond--description {
+    color: white;
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.bond--type {
+    text-transform: uppercase;
+    margin-top: 20px;
+    height: 20px !important;
+}
+
+.bond--multiplier {
+    color: white;
+    margin-top: 30px;
+}

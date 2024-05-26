@@ -41,7 +41,6 @@ export default function Dashboard(props) {
       .catch(error => console.error('Error:', error));
   }, [props.type]);
 
-  console.log(chartData);
 
   const colorMap = {
     'OTS': 'rgb(30,185,128)',

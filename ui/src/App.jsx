@@ -1,4 +1,5 @@
 import Dashboard from "./pages/Dashboard"
+import Info from "./pages/Info"
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/edo" element={<Dashboard type="EDO" />} />
             <Route path="/ros" element={<Dashboard type="ROS" />} />
             <Route path="/rod" element={<Dashboard type="ROD" />} />
+            <Route path="/info" element={<Info />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

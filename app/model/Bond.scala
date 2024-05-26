@@ -14,6 +14,7 @@ case class Bond @JsonCreator() (
                                  @JsonProperty("multiplier") multiplier: Double,
                                  @JsonProperty("multiplierActivation") multiplierActivation: Int,
                                  @JsonProperty("type") bond_type: String,
+                                 @JsonProperty("description") description: String
                                ) {
 
   val inflation: Double = 5
@@ -106,6 +107,17 @@ case class Bond @JsonCreator() (
         result.basePriceArray(month - 1)
       }
     }
+  }
+
+  def getProperties: Map[String, Any] = {
+    Map(
+      "name" -> name,
+      "percentage" -> percentage,
+      "multiplier" -> multiplier,
+      "multiplierActivation" -> multiplierActivation,
+      "type" -> bond_type,
+      "description" -> description
+    )
   }
 
   def calculateEndValue(quantity: Int, period: Int): Array[Array[Double]] = {

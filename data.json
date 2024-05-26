@@ -10,7 +10,8 @@
       "penalty": 0.75,
       "multiplier": 0,
       "multiplierActivation": 0,
-      "type": "acc"
+      "type": "acc",
+      "description": "3-month Treasury bonds"
     },
     {
       "name": "ROR",
@@ -22,7 +23,8 @@
       "penalty": 0.7,
       "multiplier": 0,
       "multiplierActivation": 0,
-      "type": "dist"
+      "type": "dist",
+      "description": "1-year savings bond with variable interest rate"
     },
     {
       "name": "DOR",
@@ -34,7 +36,8 @@
       "penalty": 0.7,
       "multiplier": 0,
       "multiplierActivation": 0,
-      "type": "dist"
+      "type": "dist",
+      "description": "2-year savings bond with variable interest rate"
     },
     {
       "name": "TOS",
@@ -46,7 +49,8 @@
       "penalty": 0.7,
       "multiplier": 0,
       "multiplierActivation": 0,
-      "type": "acc"
+      "type": "acc",
+      "description": "3-year Treasury bonds"
     },
     {
       "name": "COI",
@@ -58,7 +62,8 @@
       "penalty": 0.7,
       "multiplier": 0,
       "multiplierActivation": 0,
-      "type": "dist"
+      "type": "dist",
+      "description": "4-year Treasury bonds"
     },
     {
       "name": "EDO",
@@ -70,7 +75,8 @@
       "penalty": 2,
       "multiplier": 2,
       "multiplierActivation": 12,
-      "type": "acc"
+      "type": "acc",
+      "description": "10-year Treasury bonds"
     },
     {
       "name": "ROS",
@@ -82,7 +88,8 @@
       "penalty": 2,
       "multiplier": 1.5,
       "multiplierActivation": 12,
-      "type": "acc"
+      "type": "acc",
+      "description": "6-year Family Treasury bonds"
     },
     {
       "name": "ROD",
@@ -94,7 +101,8 @@
       "penalty": 2,
       "multiplier": 2.5,
       "multiplierActivation": 12,
-      "type": "acc"
+      "type": "acc",
+      "description": "12-year Family Treasury bonds"
     }
   ]
 }
