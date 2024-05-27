@@ -18,19 +18,37 @@ case class DistributiveBond @JsonCreator() (
                                              @JsonProperty("description") description: String
                                            ) extends Bond {
   override protected def calculateWithdrawal(month: Int, result: Result): Unit = {
-    result.withdrawalArray(month) = 0
+    result.withdrawalArray(month) =
+      if ((month + 1) % distribution == 0) {
+          result.basePriceArray(month)
+      } else {
+        result.grossValueArray(month) - result.penaltyArray(month)
+      }
   }
 
   override protected def calculateAccount(month: Int, result: Result): Unit = {
-    result.accountArray(month) = 0
+    result.accountArray(month) = if ((month == 0) && (month + 1) % distribution == 0) {
+      (result.grossValueArray(month) - result.basePriceArray(month)) * 0.81
+    } else if (month == 0) {
+      0
+    } else if (month % duration == 0) {
+      result.withdrawalArray(month - 1) + result.accountArray(month - 1) -
+        floor((result.withdrawalArray(month - 1) + result.accountArray(month - 1)) / change) * change
+    } else if ((month != 0) && (month + 1) % distribution == 0) {
+      (result.grossValueArray(month) - (result.quantityArray(month) * price)) * 0.81 + result.accountArray(month - 1)
+    } else {
+      result.accountArray(month - 1)
+    }
+
   }
 
   override protected def calculateBasePrice(month: Int, result: Result): Unit = {
-    result.basePriceArray(month) = 0
+    result.basePriceArray(month) = result.quantityArray(month) * price
   }
 
   override protected def calculateGrossValue(month: Int, result: Result): Unit = {
-    result.grossValueArray(month) = 0
+    val tempMultiplier = if ((month + 1) % distribution != 0) then (month + 1) % distribution else distribution
+    result.grossValueArray(month) = result.basePriceArray(month) * (1 + result.percentageArray(month) * tempMultiplier / 12)
   }
 
   override def getProperties: Map[String, Any] = {

@@ -46,6 +46,8 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
     val json = Json.toJson(result)
     Ok(json)
   }
+
+
 }
 
 

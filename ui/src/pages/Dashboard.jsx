@@ -11,7 +11,7 @@ export default function Dashboard(props) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const months = 600;
+  const months = 400;
   const quantity = 50;
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function Dashboard(props) {
           quantity: row[1],
           buyPrice: Math.round(row[2] * 100) / 100,
           basePrice: Math.round(row[3] * 100) / 100,
-          percentage: Math.round(row[4] * 100) / 100,
+          percentage: Math.round(row[4] * 10000) / 10000,
           grossValue: Math.round(row[5] * 100) / 100,
           penalty: Math.round(row[6] * 100) / 100,
           withdrawal: Math.round(row[7] * 100) / 100,
@@ -51,7 +51,7 @@ export default function Dashboard(props) {
     'EDO': '#8dd1e1',
     'ROS': '#ffc658',
     'ROD': '#d0ed57',
-    'defaultColor': 'rgb(30,185,128)'
+    'defaultColor': 'rgb(255, 255, 255)'
   };
 
   const tableCellStyle = {

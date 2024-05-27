@@ -13,7 +13,7 @@ trait Bond {
   val multiplierActivation: Int
   val description: String
 
-  val inflation: Double = 5
+  val inflation: Double = 4
 
   //  PRIVATE
   private def roundToTwoPlaces(x: Double): Double = {
@@ -26,7 +26,7 @@ trait Bond {
 
   private def calculatePercentage(month: Int, result: Result): Unit = {
     result.percentageArray(month) = 
-      if (multiplier == 0 || month + 1 <= multiplierActivation) {
+      if (multiplier == 0 || (month % duration) < multiplierActivation) {
         makeDecimalPercentage(percentage)
       } else {
         makeDecimalPercentage(inflation + multiplier)
@@ -65,11 +65,11 @@ trait Bond {
     result.quantityArray(0) = quantity
     result.buyPriceArray(0) = price
     result.basePriceArray(0) = quantity * price
-    result.accountArray(0) = 0
     calculatePercentage(0, result)
     calculateGrossValue(0, result)
     calculatePenalty(0, result)
     calculateWithdrawal(0, result)
+    calculateAccount(0, result)
     calculateFinalResult(0, result)
 
     result.monthsArray.indices.foreach(i => result.monthsArray(i) = i + 1)
