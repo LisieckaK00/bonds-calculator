@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Nav from "../components/Nav";
@@ -7,12 +8,13 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 
 export default function Dashboard(props) {
   const [chartData, setChartData] = useState([]);
+  const [overviewChartData, setOverviewChartData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(12);
 
-  const months = 400;
-  const quantity = 50;
+  const months = 480;
+  const quantity = 40;
 
   useEffect(() => {
     axios.get(`http://localhost:9000/api/bonds/${props.type}/${quantity}/${months}`)
@@ -39,8 +41,27 @@ export default function Dashboard(props) {
         setTableData(newTableData);
       })
       .catch(error => console.error('Error:', error));
-  }, [props.type]);
+  }, [quantity, months, props.type]);
 
+  useEffect(() => {
+    axios.get(`http://localhost:9000/api/bonds/all/getAllBonds/${quantity}/${months}`)
+      .then(response => {
+        const allBondsChartData = [];
+        Object.keys(response.data).forEach(bondName => {
+          const bondData = response.data[bondName];
+          const bondChartData = bondData.map((row, index) => ({
+            bondName,
+            month: index + 1,
+            finalResult: Math.round(row[9] * 100) / 100,
+          }));
+
+          allBondsChartData.push(...bondChartData);
+        });
+
+        setOverviewChartData(allBondsChartData);
+      })
+      .catch(error => console.error('Error:', error));
+  }, [quantity, months]);
 
   const colorMap = {
     'OTS': 'rgb(30,185,128)',
@@ -51,6 +72,7 @@ export default function Dashboard(props) {
     'EDO': '#8dd1e1',
     'ROS': '#ffc658',
     'ROD': '#d0ed57',
+    'Overview': 'rgb(255, 255, 255)',
     'defaultColor': 'rgb(255, 255, 255)'
   };
 
@@ -68,6 +90,41 @@ export default function Dashboard(props) {
     setPage(0);
   };
 
+  const renderLines = (currentType) => {
+    const dataToUse = currentType === 'Overview' ? overviewChartData : chartData;
+  
+    if (currentType !== 'Overview') {
+      return (
+        <Line
+          key="individual"
+          type="monotone"
+          dataKey="Result"
+          data={dataToUse}
+          stroke={colorMap[currentType] || colorMap.defaultColor}
+          dot={{ r: 0 }}
+          activeDot={{ r: 8 }}
+        />
+      );
+    }
+  
+    const bondNames = [...new Set(dataToUse.map(data => data.bondName))];
+    return bondNames.map(bondName => {
+      const bondData = dataToUse.filter(data => data.bondName === bondName);
+      return (
+        <Line
+          key={bondName}
+          type="monotone"
+          dataKey="finalResult"
+          name={bondName}
+          data={bondData}
+          stroke={colorMap[bondName] || colorMap.defaultColor}
+          dot={{ r: 0 }}
+          activeDot={{ r: 8 }}
+        />
+      );
+    });
+  };
+
   return (
     <>
       <div className="dashboard--wrapper">
@@ -75,30 +132,21 @@ export default function Dashboard(props) {
         <div className="chart--wrapper">
           <p className="chart--text">Chart for <span style={{ color: colorMap[props.type] || 'defaultColor' }}>{props.type}</span></p>
           <div style={{ width: '70vw', height: '500px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={chartData}
-                  margin={{ top: 50, right: 100, left: 20, bottom: 20 }}
-                >
-                <XAxis
-                  dataKey="month"
-                  type="number"
-                  domain={[1, months]}
-                  allowDecimals={false}
-                  ticks={Array.from({ length: months }, (_, i) => i + 1)}
-                  label={{ value: 'Month', position: 'insideBottomRight', offset: -10 }}
-                />
-                <YAxis
-                  domain={[10000, 'auto']}
-                  label={{ value: 'Final Result', position: 'insideTop', offset: -40 }}
-                />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="Result" stroke={colorMap[props.type] || 'defaultColor'} dot={{ r: 0 }} />
-              </LineChart>
-            </ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              key={`${props.type}-${Date.now()}`}
+              data={props.type === 'Overview' ? overviewChartData : chartData}
+              margin={{ top: 50, right: 100, left: 20, bottom: 20 }}
+            >
+              <XAxis dataKey="month" type="number" domain={[1, months]} allowDecimals={false} ticks={Array.from({ length: months }, (_, i) => i + 1)} label={{ value: 'Month', position: 'insideBottomRight', offset: -10 }} />
+              <YAxis domain={['auto', 'auto']} label={{ value: 'Final Result', position: 'insideTop', offset: -40 }} />
+              <Tooltip />
+              <Legend />
+              {renderLines(props.type)}
+            </LineChart>
+          </ResponsiveContainer>
           </div>
-          <div className="table--wrapper">
+          {props.type !== 'Overview' && <div className="table--wrapper">
             <TableContainer component={Paper} sx={{
               backgroundColor: 'transparent',
               color: 'white',
@@ -148,7 +196,7 @@ export default function Dashboard(props) {
                 />
               </Box>
             </TableContainer>
-          </div>
+          </div>}
         </div>
       </div>
     </>
