@@ -25,45 +25,56 @@ trait Bond {
   }
 
   private def calculatePercentage(month: Int, result: Result): Unit = {
-    if (result.percentageArray(month) == -1.0) {
-      result.percentageArray(month) = if (multiplier == 0 || month + 1 <= multiplierActivation) {
+    result.percentageArray(month) = 
+      if (multiplier == 0 || month + 1 <= multiplierActivation) {
         makeDecimalPercentage(percentage)
       } else {
         makeDecimalPercentage(inflation + multiplier)
       }
-    }
   }
 
   private def calculatePenalty(month: Int, result: Result): Unit = {
-    if (result.penaltyArray(month) == -1.0) {
-      result.penaltyArray(month) = if ((month + 1) % duration == 0) {
+    result.penaltyArray(month) = 
+      if ((month + 1) % duration == 0) {
         0
       } else {
         Math.min(result.quantityArray(month) * penalty, result.grossValueArray(month) - result.quantityArray(month) * price)
       }
-    }
   }
 
   private def calculateFinalResult(month: Int, result: Result): Unit = {
-    if (result.finalResultArray(month) == -1.0) {
-      result.finalResultArray(month) = result.withdrawalArray(month) + result.accountArray(month)
-    }
+    result.finalResultArray(month) = result.withdrawalArray(month) + result.accountArray(month)
   }
 
   private def calculateQuantity(month: Int, result: Result): Unit = {
-    if (result.quantityArray(month) == -1) {
-      result.quantityArray(month) = if (month % duration == 0) {
+    result.quantityArray(month) = 
+      if (month % duration == 0) {
         floor((result.withdrawalArray(month - 1) + result.accountArray(month - 1)) / change).toInt
       } else {
         result.quantityArray(month - 1)
       }
-    }
   }
 
   private def calculateBuyPrice(month: Int, result: Result): Unit = {
-    if (result.buyPriceArray(month) == -1.0) {
-      result.buyPriceArray(month) = if (month % duration == 0) change else result.buyPriceArray(month - 1)
-    }
+    result.buyPriceArray(month) = if (month % duration == 0) change else result.buyPriceArray(month - 1)
+  }
+
+  private def getInitialisedRecord(quantity: Int, period: Int): Result = {
+    val result = new Result(period)
+
+    result.quantityArray(0) = quantity
+    result.buyPriceArray(0) = price
+    result.basePriceArray(0) = quantity * price
+    result.accountArray(0) = 0
+    calculatePercentage(0, result)
+    calculateGrossValue(0, result)
+    calculatePenalty(0, result)
+    calculateWithdrawal(0, result)
+    calculateFinalResult(0, result)
+
+    result.monthsArray.indices.foreach(i => result.monthsArray(i) = i + 1)
+
+    result
   }
 
   // PROTECTED
@@ -87,16 +98,9 @@ trait Bond {
   }
 
   def calculateEndValue(quantity: Int, period: Int): Array[Array[Double]] = {
-    val result = new Result(period)
+    val result = getInitialisedRecord(quantity, period)
 
-    result.quantityArray(0) = quantity
-    result.buyPriceArray(0) = price
-    result.basePriceArray(0) = quantity * price
-    result.accountArray(0) = 0
-
-    result.monthsArray.indices.foreach(i => result.monthsArray(i) = i + 1)
-
-    for (month <- 0 until period) {
+    for (month <- 1 until period) {
       calculatePercentage(month, result)
       calculateBuyPrice(month, result)
       calculateQuantity(month, result)
