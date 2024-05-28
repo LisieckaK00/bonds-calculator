@@ -27,19 +27,25 @@ case class DistributiveBond @JsonCreator() (
   }
 
   override protected def calculateAccount(month: Int, result: Result): Unit = {
-    result.accountArray(month) = if ((month == 0) && (month + 1) % distribution == 0) {
-      (result.grossValueArray(month) - result.basePriceArray(month)) * 0.81
-    } else if (month == 0) {
-      0
-    } else if (month % duration == 0) {
-      result.withdrawalArray(month - 1) + result.accountArray(month - 1) -
-        floor((result.withdrawalArray(month - 1) + result.accountArray(month - 1)) / change) * change
-    } else if ((month != 0) && (month + 1) % distribution == 0) {
-      (result.grossValueArray(month) - (result.quantityArray(month) * price)) * 0.81 + result.accountArray(month - 1)
-    } else {
-      result.accountArray(month - 1)
-    }
+    // if month == 0 throw exception
+    result.accountArray(month) =
+      if (month % duration == 0) {
+        result.withdrawalArray(month - 1) + result.accountArray(month - 1) -
+          floor((result.withdrawalArray(month - 1) + result.accountArray(month - 1)) / change) * change
+      } else if ( (month + 1) % distribution == 0) {
+        (result.grossValueArray(month) - (result.quantityArray(month) * price)) * 0.81 + result.accountArray(month - 1)
+      } else {
+        result.accountArray(month - 1)
+      }
+  }
 
+  override protected def calculateAccountStartingValue(result: Result): Unit = {
+    result.accountArray(0) =
+      if ( 1 % distribution == 0) {
+        (result.grossValueArray(0) - result.basePriceArray(0)) * 0.81
+      } else {
+        0
+      }
   }
 
   override protected def calculateBasePrice(month: Int, result: Result): Unit = {

@@ -35,7 +35,7 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
     val result: Option[Array[Array[Double]]] = bondListFromFile.bonds.find(_.name == bondName).map(_.calculateEndValue(quantity, period))
     val resultValue: Array[Array[Double]] = result.getOrElse(Array.empty[Array[Double]])
 
-    val json = Json.toJson(resultValue)
+    val json = Json.obj(bondName -> resultValue)
     Ok(json)
   }
 

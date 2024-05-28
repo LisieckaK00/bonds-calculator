@@ -39,6 +39,10 @@ case class AccumulativeBond @JsonCreator() (
       }
   }
 
+  override protected def calculateAccountStartingValue(result: Result): Unit = {
+    result.accountArray(0) = 0
+  }
+
   override protected def calculateBasePrice(month: Int, result: Result): Unit = {
     result.basePriceArray(month) = 
       if (month % duration == 0) {
