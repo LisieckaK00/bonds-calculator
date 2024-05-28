@@ -69,7 +69,7 @@ trait Bond {
     calculateGrossValue(0, result)
     calculatePenalty(0, result)
     calculateWithdrawal(0, result)
-    calculateAccount(0, result)
+    calculateAccountStartingValue(result)
     calculateFinalResult(0, result)
 
     result.monthsArray.indices.foreach(i => result.monthsArray(i) = i + 1)
@@ -78,6 +78,8 @@ trait Bond {
   }
 
   // PROTECTED
+  protected def calculateAccountStartingValue(result: Result): Unit
+
   protected def calculateBasePrice(month: Int, result: Result): Unit
 
   protected def calculateGrossValue(month: Int, result: Result): Unit
