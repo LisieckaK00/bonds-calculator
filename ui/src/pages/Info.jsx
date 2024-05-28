@@ -32,7 +32,7 @@ export default function Info() {
     'EDO': '#8dd1e1',
     'ROS': '#ffc658',
     'ROD': '#d0ed57',
-    'defaultColor': 'rgb(30,185,128)'
+    'defaultColor': '#3769DA'
     };
 
 
@@ -42,9 +42,9 @@ export default function Info() {
         <div className="bonds--wrapper">
             {bondsProperties.map((bond, index) => (
             <div className="bond" key={index}>
-                <div className="bond--header" style={{ color: colorMap[bond.name] || 'defaultColor' }}> {bond.percentage}% <p className="bond--name">{bond.name}</p></div>
+                <div className="bond--header" style={{ color: colorMap[bond.name] || colorMap['defaultColor'] }}> {bond.percentage}% <p className="bond--name">{bond.name}</p></div>
                 <div className="bond--description">{bond.description}</div>
-                <div className="bond--type" style={{ color: colorMap[bond.name] || 'defaultColor' }}>{bond.type}</div>
+                <div className="bond--type" style={{ color: colorMap[bond.name] || colorMap['defaultColor'] }}>{bond.type}</div>
                 {bond.multiplier > 0 && 
                     <>
                     <div className="bond--multiplier">After {bond.multiplierActivation} months inflation + {bond.multiplier}% interest</div>

@@ -24,12 +24,16 @@ case class AccumulativeBond @JsonCreator() (
   }
 
   override protected def calculateAccount(month: Int, result: Result): Unit = {
-    val tempVal = result.quantityArray(month - 1) * price + (result.withdrawalArray(month - 1) -
-      result.quantityArray(month - 1) * price) + result.accountArray(month - 1)
+    result.accountArray(month) =
+      if (month == 0) {
+        0
+      }
+      else if (month % duration == 0) {
+        val tempVal = result.quantityArray(month - 1) * price + (result.withdrawalArray(month - 1) -
+          result.quantityArray(month - 1) * price) + result.accountArray(month - 1)
 
-    result.accountArray(month) = 
-      if (month % duration == 0) {
         tempVal - (floor(tempVal / change).toInt * change)
+
       } else {
         result.accountArray(month - 1)
       }
