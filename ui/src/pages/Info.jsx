@@ -2,9 +2,9 @@ import Nav from "../components/Nav";
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import "../styles/info.css";
+import { colorMap } from "../components/Colors";
 
 export default function Info() {
-
     const [bondsProperties, setBondsProperties] = useState([])
 
     useEffect(() => {
@@ -22,19 +22,6 @@ export default function Info() {
           })
           .catch(error => console.error('Error:', error));
     }, []);
-
-    const colorMap = {
-    'OTS': 'rgb(30,185,128)',
-    'ROR': '#dc004e',
-    'DOR': '#82ca9d',
-    'TOS': '#ff7300',
-    'COI': '#8884d8',
-    'EDO': '#8dd1e1',
-    'ROS': '#ffc658',
-    'ROD': '#d0ed57',
-    'defaultColor': '#3769DA'
-    };
-
 
     return (
         <>
