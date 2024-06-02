@@ -1,9 +1,22 @@
-import { Breadcrumbs } from '@mui/material'
-import { Link } from 'react-router-dom';
+import { Breadcrumbs } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
+import { colorMap } from "./Colors";
+import { BorderBottom } from '@mui/icons-material';
 
 function handleClick(event) {
-    event.preventDefault();
+    event.preventDefault();  
 }
+
+const linkStyle = {
+    cursor: 'pointer',
+    textDecoration: 'none',
+};
+
+const getActiveLinkStyle = (item) => ({
+    ...linkStyle,
+    color: (colorMap[item] || colorMap.defaultColor),  
+    fontWeight: 500
+});
 
 const data = ['OVERVIEW', 'OTS', 'ROR', 'DOR', 'TOS', 'COI', 'EDO', 'ROS', 'ROD'];
 
@@ -13,39 +26,31 @@ const breadcrumbData = data.map(item => ({
 }));
 
 export default function Nav() {
+    const location = useLocation(); 
     return (
-        <>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
             <div role="presentation" onClick={handleClick}>
-            <Breadcrumbs maxItems={15} sx={{ fontSize: 24 }}>
-                <Link
+                <Breadcrumbs maxItems={15} sx={{ fontSize: 24 }}>
+                    <Link
                         underline="hover"
                         to="/info"
-                        style={{
-                            cursor: 'pointer', 
-                            textDecoration: 'none', 
-                        }}
-                >INFO</Link>
-                {breadcrumbData.map((breadcrumb, index) => (
-                <Link
-                    key={index}
-                    underline="hover"
-                    color={breadcrumb.current ? 'primary' : 'text.primary'}
-                    to={breadcrumb.href}
-                    aria-current={breadcrumb.current ? 'page' : undefined}
-                    style={{
-                        color: breadcrumb.current ? undefined : 'white', 
-                        cursor: 'pointer', 
-                        textDecoration: 'none', 
-                    }}
-                >
-                {breadcrumb.label}
-                </Link>
-                ))}
-                
-            </Breadcrumbs>
+                        style={location.pathname === '/info' ? getActiveLinkStyle('INFO') : linkStyle}
+                    >
+                        INFO
+                    </Link>
+                    {breadcrumbData.map((breadcrumb, index) => (
+                        <Link
+                            key={index}
+                            underline="hover"
+                            to={breadcrumb.href}
+                            aria-current={location.pathname === breadcrumb.href ? 'page' : undefined}
+                            style={location.pathname === breadcrumb.href ? getActiveLinkStyle(breadcrumb.label) : linkStyle}
+                        >
+                            {breadcrumb.label}
+                        </Link>
+                    ))}
+                </Breadcrumbs>
             </div>
         </div>
-        </>
-    )
+    );
 }
