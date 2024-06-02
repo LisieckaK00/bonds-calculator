@@ -76,8 +76,8 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi)(i
       }.map { cachedJson =>
         val maybeBondData = cachedJson.asOpt[Array[Array[Double]]] // Convert JsValue to Array[Array[Double]]
         val maybeLastArray = maybeBondData.flatMap(_.lastOption) // Extract the last array if it exists
-        val lastArray = maybeLastArray.getOrElse(Array.empty[Double]) // Get the last array or an empty array if not found
-        bond.name -> Json.toJson(lastArray) // Convert the last array to Json and return
+        val lastElement = maybeLastArray.map(_.lastOption).flatten.getOrElse(0.0) // Get the last element of the last array or 0.0 if not found
+        bond.name -> Json.toJson(lastElement) // Convert the last element to Json and return
       }
     }
 
@@ -86,6 +86,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi)(i
       Ok(Json.toJson(allBondsData)) // Convert the result to JSON
     }
   }
+
 
 
 }
