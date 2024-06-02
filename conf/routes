@@ -5,4 +5,5 @@
 
 GET /api/bonds/:bondName/:quantity/:period           controllers.DataController.getByName(bondName: String, quantity: Int, period: Int)
 GET /api/bonds/getProperties                         controllers.DataController.getAllBondsProperties()
-GET /api/bonds/all/getAllBonds/:quantity/:period         controllers.DataController.getAllBonds(quantity: Int, period: Int)
+GET /api/bonds/all/getAllBonds/:quantity/:period     controllers.DataController.getAllBonds(quantity: Int, period: Int)
+GET /api/bonds/all/finalResult/:quantity/:period     controllers.DataController.getAllBondsFinalResult(quantity: Int, period: Int)

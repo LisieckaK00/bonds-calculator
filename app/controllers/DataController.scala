@@ -58,6 +58,18 @@ class DataController @Inject()(cc: ControllerComponents) extends AbstractControl
     val json = Json.toJson(allBondsData)
     Ok(json)
   }
+  
+  def getAllBondsFinalResult(quantity: Int, period: Int) = Action {
+    val reader: JSONReader = new JSONReader()
+    val bondListFromFile: BondList = reader.loadFromFile("data.json")
+
+    val allFinalResult: Map[String, Array[Double]] = bondListFromFile.bonds.map { bond =>
+      bond.name -> bond.calculateEndValue(quantity, period).map(row => row.last)
+    }.toMap
+
+    val json = Json.toJson(allFinalResult)
+    Ok(json)
+  }
 }
 
 
