@@ -1,7 +1,6 @@
 import { Breadcrumbs } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
 import { colorMap } from "./Colors";
-import { BorderBottom } from '@mui/icons-material';
 
 function handleClick(event) {
     event.preventDefault();  
@@ -31,6 +30,13 @@ export default function Nav() {
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
             <div role="presentation" onClick={handleClick}>
                 <Breadcrumbs maxItems={15} sx={{ fontSize: 24 }}>
+                    <Link
+                        underline="hover"
+                        to="/start"
+                        style={location.pathname === '/start' ? getActiveLinkStyle('START') : linkStyle}
+                    >
+                        START
+                    </Link>
                     <Link
                         underline="hover"
                         to="/info"

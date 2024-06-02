@@ -1,0 +1,75 @@
+.start--wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    height: 90vh;
+}
+
+.start--header {
+    font-size: 22px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.input--box{ 
+    width: 340px;
+}
+
+.input {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input > input{
+    width: 150px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid white;
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;  
+  margin: 0;
+}
+
+.input > input:focus{
+    outline: none;
+}
+
+.months--input {
+
+}
+
+.months--input, .quantity--input > label {
+    font-size: 26px;
+    text-transform: uppercase;
+}
+
+
+.quantity--input {
+    
+}
+
+.chart--container {
+    width: 1000px;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart--container > p {
+    font-size: 22px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
