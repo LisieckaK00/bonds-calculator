@@ -48,7 +48,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
           val result: Option[Array[Array[Double]]] = bondListFromFile
             .bonds
             .find(_.name == bondName)
-            .map(_.calculateEndValue(params.quantity, params.period))
+            .map(_.calculateEndValue(params))
           val resultValue: Array[Array[Double]] = result.getOrElse(Array.empty[Array[Double]])
 
           Future.successful(Json.toJson(resultValue))
@@ -68,7 +68,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
         val futures = bondListFromFile.bonds.map { bond =>
           val cacheKey = params.generateCacheKey(bond.name)
           cache.getOrElseUpdate(cacheKey, 10.minutes) {
-            Future.successful(bond.calculateEndValue(params.quantity, params.period)).map(result => Json.toJson(result)) // Serialize result to JSON
+            Future.successful(bond.calculateEndValue(params)).map(result => Json.toJson(result)) // Serialize result to JSON
           }.map(json => bond.name -> json)
         }
 
@@ -90,7 +90,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
         val futures = bondListFromFile.bonds.map { bond =>
           val cacheKey = params.generateCacheKey(bond.name)
           cache.getOrElseUpdate(cacheKey, 10.minutes) {
-            Future.successful(bond.calculateEndValue(params.quantity, params.period)).map(result => Json.toJson(result)) // Serialize result to JSON
+            Future.successful(bond.calculateEndValue(params)).map(result => Json.toJson(result)) // Serialize result to JSON
           }.map { cachedJson =>
             val maybeBondData = cachedJson.asOpt[Array[Array[Double]]] // Convert JsValue to Array[Array[Double]]
             val maybeLastArray = maybeBondData.flatMap(_.lastOption) // Extract the last array if it exists
