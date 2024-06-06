@@ -23,11 +23,18 @@ export default function Start() {
 
   useEffect(() => {
     if (months) {
-      const numPoints = Math.floor(months / 12) + 1;
-      const newData = Array.from({ length: numPoints }, (_, i) => ({
-        year: i + 1,  // Start from 1
-        inflationValue: 2.5
-      }));
+      const storedDataString = localStorage.getItem('data');
+      let newData;
+
+      if(storedDataString){
+        newData = JSON.parse(storedDataString);
+      }else{
+        const numPoints = Math.floor(months / 12) + 1;
+        newData = Array.from({ length: numPoints }, (_, i) => ({
+          year: i + 1,  // Start from 1
+          inflationValue: 2.5
+        }));
+      }
       setData(newData);
     }
   }, [months]);
@@ -77,13 +84,15 @@ export default function Start() {
   const handleClick = () => {
     localStorage.setItem('quantity', quantity);
     localStorage.setItem('months', months);
+    localStorage.setItem('data', JSON.stringify(data))
 
-    const data = {
+    const dataToSend = {
       quantity: Number(quantity),
-      period: Number(months)
+      period: Number(months),
+      inflation: data.map(item => parseFloat(item.inflationValue.toFixed(2)))
     };
 
-    axios.post(`http://localhost:9000/api/params/save`, data, {
+    axios.post(`http://localhost:9000/api/params/save`, dataToSend, {
       headers: {
         'Content-Type': 'application/json'
       }

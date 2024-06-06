@@ -13,6 +13,7 @@ class ParamsController @Inject()(cc: ControllerComponents) extends AbstractContr
   def saveParams: Action[JsValue] = Action(parse.json) { request =>
     request.body.validate[Params].fold(
       errors => {
+        println(errors)
         BadRequest(Json.obj("status" -> "error", "message" -> JsError.toJson(errors)))
       },
       params => {
