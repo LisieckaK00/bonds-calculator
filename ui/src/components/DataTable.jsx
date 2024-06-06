@@ -23,7 +23,7 @@ export default function DataTable(props) {
     ];
 
     useEffect(() => {
-        axios.get(`http://localhost:9000/api/bonds/${props.type}/${props.quantity}/${props.months}`)
+        axios.get(`http://localhost:9000/api/bond/${props.type}`)
         .then(response => {
             const newTableData = [];
             Object.keys(response.data).forEach(bondName => {

@@ -6,8 +6,8 @@ import { colorMap } from "./Colors";
 export default function Chart(props){
     const [chartData, setChartData] = useState([]);
     const url = props.type === 'Overview' ? 
-    `http://localhost:9000/api/bonds/all/getAllBonds/${props.quantity}/${props.months}` : 
-    `http://localhost:9000/api/bonds/${props.type}/${props.quantity}/${props.months}`
+    `http://localhost:9000/api/bonds/getFullData` :
+    `http://localhost:9000/api/bond/${props.type}`
 
     useEffect(() => {
         axios.get(url)

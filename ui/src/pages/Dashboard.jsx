@@ -1,11 +1,24 @@
 import Nav from "../components/Nav";
 import DataTable from "../components/DataTable"
 import Chart from "../components/Chart";
+import {useEffect, useState} from "react";
 
 export default function Dashboard(props) {
 
-  const months = 480;
-  const quantity = 40;
+    const [months, setMonths] = useState(10);
+    const [quantity, setQuantity] = useState(10);
+
+    useEffect(() => {
+        const storedMonths = localStorage.getItem('months');
+        const storedQuantity = localStorage.getItem('quantity');
+
+        if (storedMonths !== null) {
+            setMonths(Number(storedMonths));
+        }
+        if (storedQuantity !== null) {
+            setQuantity(Number(storedQuantity));
+        }
+    }, []);
 
   return (
     <>
