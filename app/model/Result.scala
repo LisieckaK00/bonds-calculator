@@ -1,5 +1,10 @@
 package model
 
+/**
+ * Represents values needed for calculating bond's profit.
+ *
+ * @param period Duration of the bond in months.
+ */
 class Result(val period: Int) {
   var monthsArray: Array[Int] = Array.fill[Int](period)(-1)
   var quantityArray: Array[Int] = Array.fill[Int](period)(-1)
@@ -12,6 +17,11 @@ class Result(val period: Int) {
   var accountArray: Array[Double] = Array.fill[Double](period)(-1.0)
   var finalResultArray: Array[Double] = Array.fill[Double](period)(-1.0)
 
+  /**
+   * Merge arrays into one 2D array.
+   *
+   * @return A 2D array consisting of all array attributes.
+   */
   def mergeArrays(): Array[Array[Double]] = {
     Array.tabulate(period) { month =>
       Array(
