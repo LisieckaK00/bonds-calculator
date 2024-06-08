@@ -113,13 +113,6 @@ trait Bond {
       calculateFinalResult(month, result)
     }
 
-    // test print
-
-//    println(f"Month | Quantity | BuyPrice | BasePrice | Percentage | GrossValue | Penalty | Withdrawal | Account | FinalResult")
-//    for (month <- 0 until period) {
-//      println(f"${result.monthsArray(month)}%5d | ${result.quantityArray(month)}%8d | ${result.buyPriceArray(month)}%8.2f | ${result.basePriceArray(month)}%9.2f | ${result.percentageArray(month)}%10.4f | ${result.grossValueArray(month)}%10.2f | ${result.penaltyArray(month)}%7.2f | ${result.withdrawalArray(month)}%10.2f | ${result.accountArray(month)}%7.2f | ${result.finalResultArray(month)}%11.2f")
-//    }
-
     result.mergeArrays()
   }
 }

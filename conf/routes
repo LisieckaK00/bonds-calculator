@@ -1,14 +1,7 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
-
-POST    /api/params/save           controllers.ParamsController.saveParams
-#curl -X POST -H "Content-Type: application/json" -d '{"quantity": 100, "period": 12}' http://localhost:9000/api/params/save
+POST    /api/params/save           controllers.ParamsController.saveParams()
 GET     /api/params/get            controllers.ParamsController.getParams
-#curl -X GET http://localhost:9000/api/params/get
 
-GET /api/bond/:bondName                             controllers.DataController.getByName(bondName: String)
-GET /api/bonds/getProperties                         controllers.DataController.getAllBondsProperties()
-GET /api/bonds/getFullData     controllers.DataController.getAllBonds()
-GET /api/bonds/getFinalResult     controllers.DataController.getAllBondsFinalResult()
+GET /api/bond/:bondName            controllers.DataController.getByName(bondName: String)
+GET /api/bonds/getProperties       controllers.DataController.getAllBondsProperties
+GET /api/bonds/getFullData         controllers.DataController.getAllBonds
+GET /api/bonds/getFinalResult      controllers.DataController.getAllBondsFinalResult

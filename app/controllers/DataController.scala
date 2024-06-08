@@ -16,7 +16,6 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
   // Define implicit formats
   implicit val doubleArrayWrites: Writes[Array[Double]] = Writes.arrayWrites[Double]
   implicit val doubleArrayArrayWrites: Writes[Array[Array[Double]]] = Writes.arrayWrites[Array[Double]]
-
   implicit val mapWrites: Writes[Map[String, Any]] = new Writes[Map[String, Any]] {
     def writes(map: Map[String, Any]): JsValue = {
       Json.obj(map.map { case (key, value) => key -> (value match {
@@ -32,7 +31,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
     }
   }
 
-  def getAllBondsProperties() = Action {
+  def getAllBondsProperties = Action {
     val result: List[Map[String, Any]] = bondListFromFile.bonds.map(_.getProperties)
     val json = Json.toJson(result)
     Ok(json)
@@ -60,7 +59,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
     }
   }
 
-  def getAllBonds() = Action.async {
+  def getAllBonds = Action.async {
     val storedParams = paramsController.getStoredParams
 
     storedParams match {
@@ -82,7 +81,7 @@ class DataController @Inject()(cc: ControllerComponents, cache: AsyncCacheApi, p
     
   }
 
-  def getAllBondsFinalResult() = Action.async {
+  def getAllBondsFinalResult = Action.async {
     val storedParams = paramsController.getStoredParams
 
     storedParams match {
