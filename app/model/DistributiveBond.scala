@@ -22,7 +22,7 @@ case class DistributiveBond @JsonCreator() (
       if ((month + 1) % distribution == 0) {
           result.basePriceArray(month)
       } else {
-        result.grossValueArray(month) - result.penaltyArray(month)
+        (result.grossValueArray(month) - result.penaltyArray(month)) - (result.grossValueArray(month) - result.penaltyArray(month) - (result.basePriceArray(month))) * 0.19
       }
   }
 

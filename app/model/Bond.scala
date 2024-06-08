@@ -13,8 +13,6 @@ trait Bond {
   val multiplierActivation: Int
   val description: String
 
-  val inflation: Double = 4
-
   //  PRIVATE
   private def roundToTwoPlaces(x: Double): Double = {
     BigDecimal(x).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
@@ -24,12 +22,13 @@ trait Bond {
     BigDecimal(percentage / 100).setScale(4, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
 
-  private def calculatePercentage(month: Int, result: Result): Unit = {
+  private def calculatePercentage(month: Int, result: Result, inflation: List[Double]): Unit = {
     result.percentageArray(month) = 
       if (multiplier == 0 || (month % duration) < multiplierActivation) {
         makeDecimalPercentage(percentage)
       } else {
-        makeDecimalPercentage(inflation + multiplier)
+        val year: Int = month / 12
+        makeDecimalPercentage(inflation.apply(year) + multiplier)
       }
   }
 
@@ -59,13 +58,13 @@ trait Bond {
     result.buyPriceArray(month) = if (month % duration == 0) change else result.buyPriceArray(month - 1)
   }
 
-  private def getInitialisedRecord(quantity: Int, period: Int): Result = {
+  private def getInitialisedRecord(quantity: Int, period: Int, inflation: List[Double]): Result = {
     val result = new Result(period)
 
     result.quantityArray(0) = quantity
     result.buyPriceArray(0) = price
     result.basePriceArray(0) = quantity * price
-    calculatePercentage(0, result)
+    calculatePercentage(0, result, inflation)
     calculateGrossValue(0, result)
     calculatePenalty(0, result)
     calculateWithdrawal(0, result)
@@ -99,11 +98,11 @@ trait Bond {
     )
   }
 
-  def calculateEndValue(quantity: Int, period: Int): Array[Array[Double]] = {
-    val result = getInitialisedRecord(quantity, period)
+  def calculateEndValue(params: Params): Array[Array[Double]] = {
+    val result = getInitialisedRecord(params.quantity, params.period, params.inflation)
 
-    for (month <- 1 until period) {
-      calculatePercentage(month, result)
+    for (month <- 1 until params.period) {
+      calculatePercentage(month, result, params.inflation)
       calculateBuyPrice(month, result)
       calculateQuantity(month, result)
       calculateBasePrice(month, result)
