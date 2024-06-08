@@ -4,6 +4,14 @@ import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnoreProperties, Json
 
 import scala.math.floor
 
+/**
+ * Represents an distributive bond.
+ *
+ * This case class extends the [[Bond]] trait and inherits its properties.
+ *
+ * @param distribution The frequency of interest distribution.
+ * @inheritdoc
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class DistributiveBond @JsonCreator() (
                                              @JsonProperty("name") name: String,
@@ -27,7 +35,9 @@ case class DistributiveBond @JsonCreator() (
   }
 
   override protected def calculateAccount(month: Int, result: Result): Unit = {
-    // if month == 0 throw exception
+    if (month == 0) {
+      throw new IllegalArgumentException()
+    }
     result.accountArray(month) =
       if (month % duration == 0) {
         result.withdrawalArray(month - 1) + result.accountArray(month - 1) -

@@ -4,6 +4,13 @@ import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnoreProperties, Json
 
 import scala.math.floor
 
+/**
+ * Represents an accumulative bond.
+ *
+ * This case class extends the [[Bond]] trait and inherits its properties.
+ * @param capitalization The frequency of interest capitalization.
+ * @inheritdoc
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 case class AccumulativeBond @JsonCreator() (
                                              @JsonProperty("name") name: String,
@@ -17,6 +24,10 @@ case class AccumulativeBond @JsonCreator() (
                                              @JsonProperty("multiplierActivation") multiplierActivation: Int,
                                              @JsonProperty("description") description: String
                                            ) extends Bond {
+  override def getProperties: Map[String, Any] = {
+    super.getProperties + ("type" -> "acc")
+  }
+
   override protected def calculateWithdrawal(month: Int, result: Result): Unit = {
     result.withdrawalArray(month) = Math.max(result.quantityArray(month) * result.buyPriceArray(month) +
       (result.grossValueArray(month) - result.penaltyArray(month) - result.quantityArray(month) * result.buyPriceArray(month)) * 0.81,
@@ -24,11 +35,11 @@ case class AccumulativeBond @JsonCreator() (
   }
 
   override protected def calculateAccount(month: Int, result: Result): Unit = {
+    if (month == 0) {
+      throw new IllegalArgumentException()
+    }
     result.accountArray(month) =
-      if (month == 0) {
-        0
-      }
-      else if (month % duration == 0) {
+      if (month % duration == 0) {
         val tempVal = result.quantityArray(month - 1) * price + (result.withdrawalArray(month - 1) -
           result.quantityArray(month - 1) * price) + result.accountArray(month - 1)
 
@@ -57,9 +68,5 @@ case class AccumulativeBond @JsonCreator() (
   override protected def calculateGrossValue(month: Int, result: Result): Unit = {
     val currentMultiplier = if ((month + 1) % capitalization != 0) (month + 1) % capitalization else capitalization
     result.grossValueArray(month) = result.basePriceArray(month) * (1 + (result.percentageArray(month) * currentMultiplier) / 12)
-  }
-
-  override def getProperties: Map[String, Any] = {
-    super.getProperties + ("type" -> "acc")
   }
 }
