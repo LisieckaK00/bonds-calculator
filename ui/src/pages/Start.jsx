@@ -98,10 +98,10 @@ export default function Start() {
       }
     }).then(response => {
       console.log('Success:', response.data);
-      alert('Success!');
+      alert('Success! \nNow you can browse all tabs and see the results.');
     }).catch(error => {
       console.error('Error:', error.response ? error.response.data : error.message);
-      alert('Oh no! Something went wrong.');
+      alert('Oh no! \nSomething went wrong.');
     });
   };
 
@@ -134,11 +134,11 @@ export default function Start() {
               <Line type="monotone" dataKey="inflationValue" stroke="#8884d8" dot={<CustomizedDot />} isAnimationActive={false}/>
             </LineChart>
           </ResponsiveContainer>
-          <div className="data-display">
-              {console.log(data)}
-              <p>{data.map(item => `${item.inflationValue.toFixed(2)}`).join(", ")}</p>
-            </div>
-          <button onClick={handleClick}>COMPUTE</button>
+          {/*<div className="data-display">*/}
+          {/*    {console.log(data)}*/}
+          {/*    <p>{data.map(item => `${item.inflationValue.toFixed(2)}`).join(", ")}</p>*/}
+          {/*  </div>*/}
+          <button onClick={handleClick} className="start--button">COMPUTE</button>
         </div>}
       </div>
     </>
